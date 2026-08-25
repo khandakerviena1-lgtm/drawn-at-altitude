@@ -42,3 +42,6 @@ next-env.d.ts
 
 # claude local settings
 .claude/settings.local.json
+
+# raw film/photo source material — 470MB, never served; the site uses only /public
+/source/
