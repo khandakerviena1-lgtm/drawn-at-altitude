@@ -1,0 +1,21 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "drawn-at-altitude",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev"],
+      "port": 3000,
+      "autoPort": true,
+      "cwd": "C:\\Users\\diana\\Documents\\drawn-at-altitude"
+    },
+    {
+      "name": "drawn-at-altitude-alt",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev"],
+      "port": 3100,
+      "autoPort": true,
+      "cwd": "C:\\Users\\diana\\Documents\\drawn-at-altitude"
+    }
+  ]
+}

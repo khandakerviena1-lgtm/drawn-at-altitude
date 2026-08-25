@@ -1,0 +1,4516 @@
+@import "../styles/tokens.css";
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: auto;
+}
+
+body {
+  background: var(--paper);
+  color: var(--graphite);
+  font-family: var(--font-sans), system-ui, sans-serif;
+  font-size: var(--body-size);
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+::selection {
+  background: var(--pale-sky);
+}
+
+img,
+video {
+  max-width: 100%;
+  display: block;
+}
+
+a {
+  color: inherit;
+}
+
+/* ---------- typography primitives (Framer text styles) ---------- */
+
+.serif {
+  font-family: var(--font-serif), Georgia, serif;
+  font-weight: 500;
+}
+
+.hand {
+  font-family: var(--font-hand), cursive;
+}
+
+.typoDisplay {
+  font-family: var(--font-serif), Georgia, serif;
+  font-weight: 500;
+  font-size: var(--display-size);
+  line-height: var(--display-lh);
+  letter-spacing: var(--display-ls);
+  text-transform: uppercase;
+}
+
+.typoChapter {
+  font-family: var(--font-serif), Georgia, serif;
+  font-weight: 500;
+  font-size: var(--chapter-size);
+  line-height: var(--chapter-lh);
+  letter-spacing: var(--chapter-ls);
+}
+
+.typoStatement {
+  font-family: var(--font-serif), Georgia, serif;
+  font-weight: 500;
+  font-size: var(--chapter-size);
+  line-height: 1.12;
+  letter-spacing: var(--chapter-ls);
+}
+
+.typoEyebrow,
+.typoLabel {
+  font-family: var(--font-sans), sans-serif;
+  font-weight: 500;
+  font-size: var(--label-size);
+  line-height: 1.2;
+  letter-spacing: var(--label-ls);
+  text-transform: uppercase;
+}
+
+.typoEyebrow {
+  color: var(--clay);
+}
+
+.typoLabel {
+  color: var(--muted);
+}
+
+.typoBody {
+  font-family: var(--font-sans), sans-serif;
+  font-weight: 400;
+  font-size: var(--body-size);
+  line-height: var(--body-lh);
+  letter-spacing: var(--body-ls);
+}
+
+.typoValue {
+  font-family: var(--font-serif), Georgia, serif;
+  font-weight: 500;
+  font-size: 1.3rem;
+}
+
+/* ---------- navigation ---------- */
+
+/* ---------- the side band ----------
+   Collapsed: a slim vertical tab on the right edge. Open: a paper band with
+   the three section links. Replaces the fixed header — see Navigation.tsx.
+   The old .siteNav rules below are dead but kept, per the swappable
+   convention. */
+
+.sideRail {
+  position: fixed;
+  top: 50%;
+  right: 0;
+  z-index: 60;
+  display: flex;
+  align-items: center;
+  transform: translateY(-50%) translateX(var(--rail-panel-w));
+  transition: transform 0.4s cubic-bezier(0.4, 0, 0.25, 1);
+  --rail-panel-w: 176px;
+}
+
+.sideRail.isOpen {
+  transform: translateY(-50%) translateX(0);
+}
+
+.sideRailTab {
+  writing-mode: vertical-rl;
+  padding: 18px 9px;
+  border: 0;
+  border-radius: 8px 0 0 8px;
+  background: var(--graphite);
+  color: var(--paper);
+  font-family: var(--font-sans), system-ui, sans-serif;
+  font-size: 0.66rem;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  cursor: pointer;
+  box-shadow: -6px 0 18px -8px rgb(40 34 26 / 0.4);
+}
+
+.sideRailPanel {
+  width: var(--rail-panel-w);
+  display: flex;
+  flex-direction: column;
+  padding: 22px 26px;
+  gap: 4px;
+  background: var(--paper);
+  border-radius: 0 0 0 10px;
+  box-shadow: -14px 0 34px -18px rgb(40 34 26 / 0.5);
+}
+
+.sideRailPanel a {
+  font-family: var(--font-sans), system-ui, sans-serif;
+  font-size: 0.78rem;
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  text-decoration: none;
+  color: var(--graphite);
+  /* A full-height row each, not a text sliver: these are the page's only
+     navigation and get tapped with a thumb. */
+  padding: 13px 0;
+}
+
+.sideRailPanel a:hover,
+.sideRailPanel a:focus-visible {
+  color: var(--jt-orange);
+}
+
+.siteNav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 50;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--nav-pad-y) var(--pad-x);
+  pointer-events: none;
+  /* paper text + exclusion blend: reads dark on paper, light on film */
+  color: var(--paper);
+  mix-blend-mode: exclusion;
+  transition: transform 0.35s ease, opacity 0.35s ease;
+}
+
+/* Scrolling down slides it away; the first scroll up brings it back — see
+   Navigation.tsx. Opacity rides along because exclusion-blended text half
+   off-screen reads as a glitch, not a transition. */
+.siteNav.isHidden {
+  transform: translateY(-100%);
+  opacity: 0;
+}
+
+.siteNavBrand,
+.siteNavLinks a {
+  pointer-events: auto;
+  font-size: var(--nav-size);
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  text-decoration: none;
+  padding: 0.4rem 0;
+}
+
+.siteNavLinks {
+  display: flex;
+  gap: 26px;
+}
+
+.siteNavLinks a:hover,
+.siteNavBrand:hover {
+  opacity: 0.7;
+}
+
+.siteNavLinks a:focus-visible,
+.siteNavBrand:focus-visible {
+  outline: 1px solid currentColor;
+  outline-offset: 3px;
+}
+
+/* ---------- shared section shells ---------- */
+
+.introSection,
+.pillars,
+.campSection,
+.nineDays,
+.hostSection,
+.details,
+.finalCta {
+  position: relative;
+  margin: 0 auto;
+  padding-left: var(--pad-x);
+  padding-right: var(--pad-x);
+}
+
+/* ---------- hero (scene styles — choreography in SketchbookHero) ---------- */
+
+.hero {
+  /* 540vh, not 420: the added length is spent on three deliberate holds
+     (object settles · film revealed inside the page · arrival) rather than
+     on more movement. See the range table in SketchbookHero. */
+  position: relative;
+  height: 540vh;
+}
+
+/* The film is traversed rather than played, so this section's length is a
+   playback rate: 500vh over 23.83s ≈ 17vh of scroll per second of film at a
+   900px viewport. Longer = slower film. See FilmHero. */
+.filmHero {
+  position: relative;
+  height: 500vh;
+  background: var(--graphite);
+}
+
+.filmHero.isStill {
+  height: auto;
+}
+
+/* ---------- the film, tipped into a sketchbook (FilmBook) ---------- */
+
+/* Section length is the playback rate: 620vh over ~22s of film plus the turn.
+   Longer = slower. This is the tuning knob. */
+/* Warm ivory ground, because the section opens and closes on a card resting on
+   it — the page has to sit on paper, not on cloth. */
+/* THE ENTRY GATE. Applied by lenisControl while the gate is up; Lenis is off
+   entirely under reduced motion, so the native scroller has to be held too. */
+html.isGated,
+html.isGated body {
+  overflow: hidden;
+  overscroll-behavior: none;
+}
+
+.gate {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  background:
+    radial-gradient(120% 90% at 50% 18%, #fbf6ec 0%, var(--paper) 58%, #e9dfca 100%);
+  display: grid;
+  grid-template-rows: 1fr auto;
+  align-items: center;
+  justify-items: center;
+  gap: 3vh;
+  padding: 8vh var(--pad-x) 9vh;
+}
+
+.gateStage {
+  perspective: 2000px;
+  perspective-origin: 50% 46%;
+  width: 100%;
+  height: 100%;
+  display: grid;
+  place-items: center;
+}
+
+.gateBook {
+  position: relative;
+  width: min(74vw, 640px);
+  aspect-ratio: 1.5 / 1;
+  transform-style: preserve-3d;
+}
+
+.gateCast {
+  position: absolute;
+  left: -6%;
+  right: -6%;
+  bottom: -8%;
+  height: 18%;
+  background: radial-gradient(
+    52% 100% at 50% 0%,
+    rgb(26 24 21 / 0.4),
+    rgb(26 24 21 / 0.14) 55%,
+    transparent 76%
+  );
+  filter: blur(20px);
+  transform: translateZ(-30px);
+}
+
+.gateLeaves {
+  position: absolute;
+  inset: -1.1% -0.9%;
+  border-radius: 8px;
+  background: linear-gradient(180deg, #efe6d4 0%, #e6dbc6 62%, #d9cdb4 100%);
+  box-shadow:
+    0 0 0 0.5px rgb(122 106 84 / 0.3),
+    0 18px 40px -22px rgb(40 34 26 / 0.55);
+  transform: translateZ(-6px);
+}
+
+.gateSpread,
+.gateLeaf,
+.gateCover {
+  position: absolute;
+  inset: 0;
+  border-radius: 6px;
+  backface-visibility: hidden;
+}
+
+.gateSpread {
+  background:
+    radial-gradient(120% 80% at 50% 0%, rgb(255 253 246 / 0.5), transparent 60%),
+    var(--paper);
+  box-shadow: inset 0 0 60px rgb(120 104 80 / 0.12);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 3.2% 4.4%;
+  overflow: hidden;
+}
+
+.gateGutter {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: 5%;
+  transform: translateX(-50%);
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgb(120 102 76 / 0.16) 42%,
+    rgb(120 102 76 / 0.22) 50%,
+    rgb(120 102 76 / 0.16) 58%,
+    transparent
+  );
+  z-index: 3;
+}
+
+.gatePlate {
+  position: relative;
+  width: 92%;
+  aspect-ratio: 1280 / 768;
+  transform: rotate(-0.35deg);
+  background: #fffdf7;
+  padding: 0.7%;
+  box-shadow:
+    0 1px 0 rgb(255 255 255 / 0.6),
+    0 14px 30px -18px rgb(48 40 30 / 0.6);
+  z-index: 2;
+}
+
+.gatePlate img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+}
+
+/* Plain paper, so the riffle costs nothing and shows no content twice. */
+.gateLeaf {
+  transform-origin: left center;
+  z-index: 5;
+  background: linear-gradient(96deg, #f6efdf 0%, var(--paper) 40%, #efe6d3 100%);
+  box-shadow:
+    inset 0 0 60px rgb(120 104 80 / 0.1),
+    12px 0 40px -18px rgb(40 34 26 / 0.5);
+}
+
+.gateCover {
+  transform-origin: left center;
+  overflow: hidden;
+  z-index: 7;
+  background: #d9cdb4;
+  box-shadow:
+    inset 0 0 0 0.5px rgb(122 106 84 / 0.35),
+    14px 0 44px -18px rgb(40 34 26 / 0.55),
+    0 18px 40px -22px rgb(40 34 26 / 0.5);
+}
+
+.gateCover img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.gateText {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  text-align: center;
+  max-width: 52ch;
+}
+
+.gateTitle {
+  margin: 0;
+}
+
+.gateSupport {
+  color: var(--muted);
+  font-size: clamp(0.88rem, 1.05vw, 1rem);
+  line-height: 1.55;
+  max-width: 44ch;
+}
+
+.gateEnter {
+  margin-top: 1.4rem;
+  padding: 0.85rem 2.6rem;
+  font-family: var(--font-sans), system-ui, sans-serif;
+  font-size: 0.78rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--graphite);
+  background: transparent;
+  border: 1px solid rgb(94 82 64 / 0.45);
+  border-radius: 2px;
+  cursor: pointer;
+  transition:
+    background 0.4s ease,
+    border-color 0.4s ease,
+    letter-spacing 0.4s ease;
+}
+
+.gateEnter:hover,
+.gateEnter:focus-visible {
+  background: rgb(94 82 64 / 0.07);
+  border-color: rgb(94 82 64 / 0.8);
+  letter-spacing: 0.2em;
+}
+
+@media (max-width: 767px) {
+  .gateBook {
+    width: 86vw;
+  }
+  .gateStage {
+    perspective: 1200px;
+  }
+}
+
+.filmBook {
+  position: relative;
+  /* The pace knob. 700 -> 780 when the cover was added (opening and closing it
+     costs 0.08 of the section, which would otherwise have come out of the two
+     scrubs), then 780 -> 1200 because the client found the beats too quick to
+     read on the way past. The phase map is fractional, so this one number
+     slows everything in proportion — every scrub, every caption, and both
+     page-forming windows — without retiming anything. 54% more scroll per
+     beat. The page arrows and the skip control exist so that length is a
+     choice rather than a toll. */
+  height: 1200vh;
+  background: var(--paper);
+}
+
+.filmBook.isStill {
+  height: auto;
+  background: var(--paper);
+}
+
+.filmBookSticky {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  height: 100dvh;
+  overflow: hidden;
+  display: grid;
+  place-items: center;
+}
+
+/* "DRAWN AT ALTITUDE" is one long uppercase line, and at the shared display
+   size it runs about 15.6em wide — wider than the viewport below ~1300px,
+   where it was overflowing its box and getting clipped at both ends. Sized
+   here so it always fits, rather than shrinking every display on the site. */
+.filmBookTitle .typoDisplay {
+  font-size: clamp(1.9rem, 5.2vw, 4.4rem);
+}
+
+.filmBookTitle {
+  position: absolute;
+  top: calc(var(--nav-pad-y) * 2 + 2.2rem);
+  left: var(--pad-x);
+  right: var(--pad-x);
+  z-index: 6;
+  max-width: var(--content-width);
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.filmBookStage {
+  perspective: 2000px;
+  perspective-origin: 50% 44%;
+  width: 100%;
+  display: grid;
+  place-items: center;
+}
+
+/* The book now carries the film's own shape (1280×768), so the plate can fill
+   the page edge to edge with nothing cropped and nothing letterboxed.
+   Sized off the viewport HEIGHT, not just its width: at min(90vw, 1120px) the
+   book came out 747px tall in a 720px window and bled off the top and bottom.
+   68vh of height, whichever of the two limits binds first. */
+.filmBookWrap {
+  position: relative;
+  /* 113vh, i.e. ~68vh tall, is as large as the book goes while still clearing
+     the title above it and the caption band below it — both were measured.
+     Raising it is one number, at the cost of the title overlapping during the
+     approach; reserving rows for both instead costs more than it buys. */
+  width: min(92vw, 113vh);
+  aspect-ratio: 1280 / 768;
+  transform-style: preserve-3d;
+}
+
+.filmBookCast {
+  position: absolute;
+  left: -6%;
+  right: -6%;
+  bottom: -7%;
+  height: 18%;
+  background: radial-gradient(
+    52% 100% at 50% 0%,
+    rgb(26 24 21 / 0.44),
+    rgb(26 24 21 / 0.16) 55%,
+    transparent 76%
+  );
+  filter: blur(20px);
+  transform: translateZ(-30px);
+}
+
+/* The page block under the spread — what gives the object mass. */
+.filmBookLeaves {
+  position: absolute;
+  inset: -1.1% -0.9%;
+  border-radius: 8px;
+  background: linear-gradient(180deg, #efe6d4 0%, #e6dbc6 62%, #d9cdb4 100%);
+  box-shadow:
+    0 0 0 0.5px rgb(122 106 84 / 0.3),
+    0 18px 40px -22px rgb(40 34 26 / 0.55);
+  transform: translateZ(-6px);
+}
+
+.filmBookSpread {
+  position: absolute;
+  inset: 0;
+  border-radius: 6px;
+  background:
+    radial-gradient(120% 80% at 50% 0%, rgb(255 253 246 / 0.5), transparent 60%),
+    var(--paper);
+  box-shadow: inset 0 0 60px rgb(120 104 80 / 0.12);
+  /* No padding: the film is the page now, not a print tipped onto it. The
+     captions moved out from under it onto the ivory below the book. */
+  overflow: hidden;
+  backface-visibility: hidden;
+}
+
+/* The gutter is what makes two pages out of one rectangle. */
+.filmBookGutter {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: 5%;
+  transform: translateX(-50%);
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgb(120 102 76 / 0.16) 42%,
+    rgb(120 102 76 / 0.22) 50%,
+    rgb(120 102 76 / 0.16) 58%,
+    transparent
+  );
+  pointer-events: none;
+  z-index: 3;
+}
+
+/* The film fills the page. The book already carries the film's aspect, so
+   this is edge to edge with nothing cropped. The hand-placed tilt and the
+   white print border are gone with the margins that used to hold them — at
+   full bleed they only showed paper at the corners. */
+.filmBookPlate {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 2;
+}
+
+.filmBookVideo {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+  background: var(--paper);
+}
+
+/* Pins on the card: three places named while the page is still fogged. A
+   hairline and a dot, not a UI marker — the register is a pencilled note. */
+.filmBookPins {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 3;
+}
+
+.filmBookPin {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  transform: translate(-50%, -50%);
+  white-space: nowrap;
+}
+
+.filmBookPinDot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--graphite);
+  box-shadow: 0 0 0 4px rgb(237 223 201 / 0.55);
+  flex: none;
+}
+
+.filmBookPinLabel {
+  font-size: clamp(0.72rem, 0.92vw, 0.92rem);
+  color: var(--graphite);
+  padding: 2px 8px;
+  background: rgb(247 241 228 / 0.82);
+  border-radius: 2px;
+  box-shadow: 0 1px 8px rgb(60 50 38 / 0.14);
+}
+
+/* Written on the ivory under the book rather than on the page, now that the
+   film has the page. Still dark ink on cream, so it needs no scrim — which
+   was the whole reason it came off the film in the first place. One slot for
+   both leaves: the windows never overlap, and check-filmbook.mjs enforces
+   that, so only one caption is ever present. */
+.bookCaptionSlot {
+  position: absolute;
+  left: var(--pad-x);
+  right: var(--pad-x);
+  bottom: 3.4vh;
+  max-width: 68ch;
+  margin: 0 auto;
+  min-height: 5.4rem;
+  z-index: 6;
+  text-align: center;
+}
+
+.bookCaption {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  pointer-events: none;
+}
+
+/* Dark ink on cream: no scrim needed, so the type can be quiet. */
+.bookCaptionLine {
+  color: var(--graphite);
+  font-size: clamp(0.95rem, 1.45vw, 1.42rem);
+  line-height: 1.28;
+  max-width: 42ch;
+  text-wrap: balance;
+}
+
+.bookCaptionLine.isStatic {
+  margin-bottom: 1.1rem;
+}
+
+.bookCaptionNotes {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.bookCaptionNote {
+  color: var(--muted);
+  font-size: clamp(0.82rem, 1.02vw, 1rem);
+  line-height: 1.4;
+}
+
+.bookCaptionLabel {
+  margin-top: 4px;
+}
+
+/* The turning leaf. One face only — a two-faced leaf under preserve-3d shows
+   its mirrored underside (documented in SketchbookHero). */
+.filmBookTurn {
+  transform-origin: left center;
+  z-index: 5;
+  box-shadow:
+    inset 0 0 60px rgb(120 104 80 / 0.12),
+    12px 0 40px -18px rgb(40 34 26 / 0.5);
+}
+
+/* The cover. Same left hinge and same one-faced construction as the turning
+   leaf — it is the same physical event, one page earlier. It sits above both
+   spreads so the book is genuinely shut before it opens. */
+.filmBookCover {
+  position: absolute;
+  inset: 0;
+  border-radius: 6px;
+  overflow: hidden;
+  transform-origin: left center;
+  backface-visibility: hidden;
+  z-index: 7;
+  background: #d9cdb4;
+  box-shadow:
+    inset 0 0 0 0.5px rgb(122 106 84 / 0.35),
+    14px 0 44px -18px rgb(40 34 26 / 0.55),
+    0 18px 40px -22px rgb(40 34 26 / 0.5);
+}
+
+.filmBookCoverArt {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.filmBookTurnShade {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, rgb(40 34 26 / 0.35), transparent 45%);
+  pointer-events: none;
+  z-index: 6;
+}
+
+.filmBookStill {
+  max-width: var(--content-width);
+  margin: 0 auto;
+  padding: 10vh var(--pad-x);
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.filmBookStillImage {
+  width: 100%;
+  margin: 1.6rem 0;
+  border-radius: 4px;
+}
+
+@media (max-width: 767px) {
+  .filmBookWrap {
+    /* Aspect deliberately not overridden any more: the page carries the
+       film's shape, and squaring it up here would letterbox the film inside
+       its own page. */
+    width: 94vw;
+  }
+  .filmBookStage {
+    perspective: 1200px;
+  }
+  .bookCaptionSlot {
+    bottom: 2.4vh;
+  }
+}
+
+/* THE CAMP, ENTERED — six photographs under one forward camera.
+   Type A cinematic: the outer section is the scrub length, the sticky stage
+   is the screen. Ends on the landscape, which hands into the rooms chapter
+   ("One place to return to") directly below it. */
+.journey {
+  position: relative;
+  height: 500vh;
+  background: var(--graphite);
+}
+
+.journey.isStill {
+  height: auto;
+  background: var(--paper);
+}
+
+/* `perspective` is set inline from the component so the z values and the
+   projection stay derived from one number. preserve-3d keeps the plates on
+   their own z planes instead of being flattened back into the parent. */
+.journeySticky {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  height: 100dvh;
+  overflow: hidden;
+  transform-style: preserve-3d;
+}
+
+/* Insets are negative: a plate travelling toward the camera on z would
+   otherwise reveal the stage behind its own edges before it fills the frame.
+   The overscan absorbs the divergence. */
+.journeyPlate {
+  position: absolute;
+  inset: -12%;
+  width: 124%;
+  height: 124%;
+  object-fit: cover;
+  backface-visibility: hidden;
+  will-change: transform, opacity;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .journeyPlate {
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+}
+
+.journeyKicker {
+  position: absolute;
+  left: var(--pad-x);
+  right: var(--pad-x);
+  bottom: 9vh;
+  text-align: center;
+  z-index: 3;
+  color: var(--paper);
+  text-shadow: 0 1px 18px rgb(0 0 0 / 0.45);
+}
+
+.journeyKickerLine {
+  color: var(--paper);
+}
+
+.journeyKickerSub {
+  margin-top: 6px;
+  color: rgb(242 235 221 / 0.75);
+}
+
+.journeyClosingLine {
+  position: absolute;
+  left: var(--pad-x);
+  right: var(--pad-x);
+  bottom: 9vh;
+  text-align: center;
+  z-index: 3;
+  color: var(--paper);
+  font-size: clamp(1.1rem, 1.8vw, 1.7rem);
+  text-shadow: 0 1px 18px rgb(0 0 0 / 0.45);
+}
+
+.journeyStill {
+  max-width: var(--content-width);
+  margin: 0 auto;
+  padding: 8vh var(--pad-x);
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.journeyStill img {
+  width: 100%;
+  height: auto;
+}
+
+@media (max-width: 767px) {
+  /* Same six states, shorter throw: the sequence reads in fewer flicks and
+     the phone never feels trapped inside a pin. */
+  .journey {
+    height: 340vh;
+  }
+}
+
+/* ONE PLACE TO RETURN TO — the rooms slider.
+   Centring is done with padding rather than measurement: the track is padded
+   by half the leftover width, so slide 0 sits centred, and slide i is centred
+   by translating exactly i × (slide + gap). Correct at any viewport and any
+   number of slides. */
+.rooms {
+  position: relative;
+  background: var(--paper);
+  padding: 12vh 0 10vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2.6vh;
+
+  --slide-w: min(76vw, 1000px);
+  --slide-gap: clamp(12px, 1.6vw, 26px);
+}
+
+.roomsHead {
+  text-align: center;
+  max-width: 46ch;
+  padding: 0 var(--pad-x);
+}
+
+.roomsSupport {
+  margin-top: 0.5rem;
+  color: var(--muted);
+}
+
+.roomsStage {
+  position: relative;
+  width: 100%;
+}
+
+.roomsWindow {
+  overflow: hidden;
+  width: 100%;
+}
+
+.roomsTrack {
+  display: flex;
+  gap: var(--slide-gap);
+  padding-inline: calc((100% - var(--slide-w)) / 2);
+  will-change: transform;
+}
+
+.roomsSlide {
+  flex: 0 0 var(--slide-w);
+  margin: 0;
+  /* 3:2, the shape the client's photography actually is. */
+  aspect-ratio: 3 / 2;
+  overflow: hidden;
+  background: #e8e0d0;
+  /* The neighbours are meant to read as "there are more", not to compete
+     with the one being looked at. */
+  opacity: 0.5;
+  transition: opacity 0.6s ease;
+}
+
+.roomsSlide.isActive {
+  opacity: 1;
+}
+
+/* Holds the box for a slide that has not been given a src yet, so the track
+   never changes width as the loading window advances. */
+.roomsSlideHold {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.roomsSlide img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.roomsArrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 4;
+  width: clamp(52px, 5.4vw, 84px);
+  height: clamp(52px, 5.4vw, 84px);
+  border: 0;
+  border-radius: 50%;
+  background: #fff;
+  color: var(--graphite);
+  font-size: clamp(1.5rem, 2.2vw, 2.1rem);
+  line-height: 1;
+  cursor: pointer;
+  box-shadow: 0 10px 30px -12px rgb(48 40 30 / 0.35);
+  transition:
+    background 0.3s ease,
+    box-shadow 0.3s ease;
+}
+
+.roomsArrow:hover:not(:disabled),
+.roomsArrow:focus-visible {
+  background: #fbf7ef;
+  box-shadow: 0 14px 36px -12px rgb(48 40 30 / 0.45);
+}
+
+/* Dimmed rather than removed: the frame keeps its shape at both ends. */
+.roomsArrow:disabled {
+  opacity: 0.32;
+  cursor: default;
+}
+
+/* Sat on the frame edge, the way the reference does, rather than outside it. */
+.roomsArrow.isPrev {
+  left: calc((100% - var(--slide-w)) / 2 - clamp(26px, 2.7vw, 42px));
+}
+
+.roomsArrow.isNext {
+  right: calc((100% - var(--slide-w)) / 2 - clamp(26px, 2.7vw, 42px));
+}
+
+.roomsTitle {
+  font-size: clamp(1.6rem, 3vw, 2.6rem);
+  font-style: italic;
+  color: var(--sage, #6b7350);
+  margin: 0;
+  text-align: center;
+}
+
+.roomsDetails {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 4px 16px;
+  margin: 0;
+  padding: 0 var(--pad-x);
+  list-style: none;
+  color: var(--muted);
+}
+
+/* Same slider, different ground: the dye spreads are sketchbook pages, so
+   they sit on the warmer paper the rest of the drawn material uses. */
+.dyeWorkshop {
+  background: #f0e9db;
+}
+
+.dyeHeading {
+  margin-top: 0.6rem;
+}
+
+@media (max-width: 767px) {
+  .rooms {
+    --slide-w: 84vw;
+  }
+  .roomsArrow.isPrev {
+    left: 6px;
+  }
+  .roomsArrow.isNext {
+    right: 6px;
+  }
+}
+
+/* THE SAME WINDOW, TWICE — one scene, two media, one camera.
+   Every layer is absolutely stacked inside .morphCamera and none of them has
+   a transform of its own, so they share the move by construction rather than
+   by keeping numbers in sync. */
+/* The scene plays itself now, so the section no longer needs 560vh of scroll
+   to be scrubbed through — it is one screen, and the six phases happen in
+   time rather than in distance. */
+.morph {
+  position: relative;
+  background: #efe7d7;
+}
+
+.morph.isStill {
+  height: auto;
+}
+
+.morphSticky {
+  position: relative;
+  min-height: 100vh;
+  min-height: 100dvh;
+  overflow: hidden;
+  display: grid;
+  place-items: center;
+}
+
+/* The camp chapter's heading, carried here now that this section is it. */
+.morphTitle {
+  position: absolute;
+  top: calc(var(--nav-pad-y) * 2 + 1.6rem);
+  left: var(--pad-x);
+  right: var(--pad-x);
+  text-align: center;
+  z-index: 6;
+  max-width: 46ch;
+  margin: 0 auto;
+}
+
+.morphSupport {
+  margin-top: 0.5rem;
+  color: var(--muted);
+}
+
+/* The camp's own list, arriving with the closing line instead of sitting
+   under a video loop. */
+.morphDetails {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 4px 16px;
+  margin: 0.9rem 0 0;
+  padding: 0;
+  list-style: none;
+  color: var(--muted);
+}
+
+/* The frame the camera moves inside. Holds the plates' own 3:2 so nothing is
+   cropped differently between the two media — a difference in crop would show
+   up instantly as slippage during the handover. */
+.morphViewport {
+  position: relative;
+  width: min(94vw, 108vh);
+  aspect-ratio: 1200 / 1044;
+  overflow: hidden;
+  box-shadow: 0 30px 70px -40px rgb(48 40 30 / 0.55);
+}
+
+.morphCamera {
+  position: absolute;
+  inset: 0;
+  /* The push target: the window and the river beyond it — deliberately NOT
+     the two wicker chairs, which are the one place the plates still disagree.
+     Aiming past them keeps the weak point drifting out of frame. */
+  transform-origin: 55% 42%;
+  will-change: transform;
+}
+
+.morphLayer {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* The sketchbook's paper mat and edge. Inside the camera, so it leaves the
+   frame because the camera moved into the page — not because it was faded on
+   a timer while everything else stayed put. */
+.morphMat {
+  position: absolute;
+  inset: -7%;
+  z-index: 4;
+  pointer-events: none;
+  border: 7vmin solid #efe6d3;
+  box-shadow:
+    inset 0 0 0 1px rgb(122 106 84 / 0.35),
+    inset 0 0 70px rgb(120 104 80 / 0.16);
+}
+
+.morphGrain {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  pointer-events: none;
+  mix-blend-mode: multiply;
+  background-image:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='420' height='420'%3E%3Cfilter id='m'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.016' numOctaves='3' seed='7'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3CfeComponentTransfer%3E%3CfeFuncA type='linear' slope='0.55'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23m)'/%3E%3C/svg%3E"),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='150' height='150'%3E%3Cfilter id='t'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' seed='3'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3CfeComponentTransfer%3E%3CfeFuncA type='linear' slope='0.26'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23t)'/%3E%3C/svg%3E");
+  background-size: 420px 420px, 150px 150px;
+}
+
+.morphNote {
+  position: absolute;
+  left: var(--pad-x);
+  right: var(--pad-x);
+  bottom: 5vh;
+  max-width: 52ch;
+  margin: 0 auto;
+  text-align: center;
+  z-index: 6;
+}
+
+.morphAnnotation {
+  color: var(--graphite);
+  font-size: clamp(1rem, 1.5vw, 1.45rem);
+  line-height: 1.3;
+  text-wrap: balance;
+}
+
+.morphNoteLine {
+  margin-top: 6px;
+  color: var(--muted);
+  font-size: clamp(0.8rem, 1vw, 0.98rem);
+}
+
+.morphStill {
+  max-width: var(--content-width);
+  margin: 0 auto;
+  padding: 8vh var(--pad-x);
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.morphStill img {
+  width: 100%;
+  height: auto;
+}
+
+@media (max-width: 767px) {
+  .morphMat {
+    border-width: 9vmin;
+  }
+}
+
+/* HOW A PAGE IS MADE — the method sheet as a deck: one page, an arrow either
+   side. Background was `var(--linen)`, which is #3e3a34 — a dark bookcloth,
+   not a light linen — so the section rendered near-black and the stage rail
+   was invisible on it. These are cream sketchbook pages; they belong on paper. */
+.process {
+  position: relative;
+  background: var(--paper);
+  padding: 12vh var(--pad-x) 10vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3vh;
+}
+
+.processKicker {
+  text-align: center;
+}
+
+.processHead {
+  text-align: center;
+  max-width: 56ch;
+  padding: 0 var(--pad-x);
+}
+
+.processSub {
+  margin-top: 10px;
+  color: var(--muted);
+}
+
+/* The method beside the page it makes. The two plates have very different
+   shapes — a 307×512 printed panel and a 3:2 drawing — so they are aligned
+   on height rather than forced into a shared box. */
+.processPair {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(10px, 2.2vw, 30px);
+  max-width: 100%;
+  padding: 0 var(--pad-x);
+}
+
+.processPage {
+  width: min(52vw, 720px);
+  flex: none;
+}
+
+@media (max-width: 900px) {
+  /* Side by side and zoomed out, not stacked (client, 2026-08-19, after
+     phone testing). Stacking read as two unrelated pictures; the section's
+     whole argument is that the printed stage and the page it produces are
+     one thing, and that only reads when they sit together. Sizes are solved
+     against a 375px viewport: panel ~127px wide (56vw tall at its 307:512
+     aspect) + 14px gap + page at 50vw ≈ 187px = 328px, inside the 335px of
+     content width. The arrows keep order 3 and wrap to their own centred
+     row beneath the pair. */
+  .processPair {
+    flex-wrap: wrap;
+    gap: 14px;
+  }
+  /* Descendant selector on purpose: this media block sits BEFORE
+     .processViewport's own base rule in the file, so at equal specificity
+     the base wins and this height would silently never apply — the same
+     cascade trap this stylesheet has now sprung three times. 0,2,0 beats
+     the base's 0,1,0 regardless of order. */
+  /* Budgeted against the pair's own inner width, which is 295px at 375 —
+     the pair adds its own --pad-x on top of the section's, so the naive
+     335px budget wrapped the page onto a second row by 33px. Panel ~108px
+     (48vw tall at 307:512) + 14px gap + page at 44vw ≈ 165px = 287px. */
+  .processPair .processViewport {
+    order: 1;
+    height: min(48vw, 340px);
+  }
+  /* Doubled class for the same reason: .revealPage's own width rule sits
+     later in this file and wins at single-class specificity. */
+  .processPage.revealPage {
+    order: 2;
+    width: min(44vw, 560px);
+  }
+  .processArrow {
+    order: 3;
+  }
+}
+
+/* Exactly one panel wide, carrying the panel's own aspect — which is what
+   makes the strip exactly ten frames wide and -i*10% land true. */
+.processViewport {
+  position: relative;
+  height: min(64vh, 560px);
+  aspect-ratio: 307 / 512;
+  flex: none;
+  overflow: hidden;
+  background: var(--paper);
+  box-shadow:
+    0 1px 0 rgb(255 255 255 / 0.6),
+    0 22px 50px -30px rgb(48 40 30 / 0.5);
+}
+
+.processStrip {
+  height: 100%;
+  width: auto;
+  max-width: none;
+  display: block;
+  will-change: transform;
+}
+
+.processArrow {
+  flex: none;
+  width: clamp(38px, 4vw, 52px);
+  height: clamp(38px, 4vw, 52px);
+  border-radius: 50%;
+  border: 1px solid rgb(94 82 64 / 0.4);
+  background: transparent;
+  color: var(--graphite);
+  font-size: 1.05rem;
+  line-height: 1;
+  cursor: pointer;
+  transition:
+    background 0.3s ease,
+    border-color 0.3s ease,
+    opacity 0.3s ease;
+}
+
+.processArrow:hover:not(:disabled),
+.processArrow:focus-visible {
+  background: rgb(94 82 64 / 0.08);
+  border-color: rgb(94 82 64 / 0.75);
+}
+
+.processArrow:disabled {
+  opacity: 0.28;
+  cursor: default;
+}
+
+/* Announced, not shown: the panel prints its own heading. */
+.processLive {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.processRail {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 4px 14px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.processTick {
+  position: relative;
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  background: none;
+  border: 0;
+  padding: 4px 2px;
+  cursor: pointer;
+  opacity: 0.34;
+  transition: opacity 0.3s ease;
+}
+
+/* An invisible pseudo-element rather than real padding: real padding would
+   widen the flex row past the 375px viewport it already fills (ten ticks,
+   34px apart, room for none of it to grow without colliding with a
+   neighbour). This borrows from the row's own 6px gap instead — 6px
+   horizontal keeps neighbouring hit areas from touching (measured 34-35px
+   centre to centre); vertical has slack the layout doesn't, so it goes
+   further there. Still short of the 40px minimum, which the row's own width
+   makes structurally impossible for ten side-by-side targets; the arrows
+   beside it stay the primary control at a real 38px. */
+.processTick::after {
+  content: "";
+  position: absolute;
+  inset: -10px -6px;
+}
+
+.processTick:hover,
+.processTick:focus-visible {
+  opacity: 0.7;
+}
+
+.processTick.isActive {
+  opacity: 1;
+}
+
+.processTickNum {
+  color: var(--muted);
+}
+
+.processTickTitle {
+  color: var(--graphite);
+  font-size: clamp(0.72rem, 0.92vw, 0.92rem);
+}
+
+@media (max-width: 767px) {
+  /* No height override here any more: this block comes later in the file
+     than the max-900 side-by-side sizing and was silently re-inflating the
+     panel to 58vh, which is what pushed the page onto its own row. The
+     max-900 rule owns the size now. */
+  /* Ten titles do not fit a phone; the numbers still track the deck. */
+  .processTickTitle {
+    display: none;
+  }
+}
+
+/* ONE PAGE, FROM NOTHING — graphite, then ink, then the washes. The plate is
+   1536×1024, so at these sizes it is shown at or under 1:1. */
+.reveal {
+  position: relative;
+  height: 460vh;
+  background: var(--paper);
+}
+
+.reveal.isStill {
+  height: auto;
+}
+
+.revealSticky {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  height: 100dvh;
+  overflow: hidden;
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  justify-items: center;
+  gap: 2.2vh;
+  padding: calc(var(--nav-pad-y) * 2 + 2rem) var(--pad-x) 5vh;
+}
+
+.revealKicker {
+  text-align: center;
+}
+
+/* The sheet itself: paper, with the drawing built on top of it. */
+.revealPage {
+  position: relative;
+  width: min(92vw, 1080px);
+  aspect-ratio: 1536 / 1024;
+  max-height: 100%;
+  align-self: center;
+  background: var(--paper);
+  box-shadow:
+    0 1px 0 rgb(255 255 255 / 0.5),
+    0 26px 60px -34px rgb(48 40 30 / 0.6);
+}
+
+.revealLayer {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+  mask-repeat: no-repeat;
+  -webkit-mask-repeat: no-repeat;
+  mask-size: 100% 100%;
+  -webkit-mask-size: 100% 100%;
+}
+
+.revealCaptionSlot {
+  position: relative;
+  width: min(92vw, 1080px);
+  min-height: 5.2rem;
+}
+
+.revealCaption {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  pointer-events: none;
+}
+
+.revealCaptionLine {
+  color: var(--graphite);
+  font-size: clamp(0.95rem, 1.4vw, 1.35rem);
+  line-height: 1.3;
+  max-width: 46ch;
+  text-wrap: balance;
+}
+
+.revealCaptionLine.isStatic {
+  margin-bottom: 0.9rem;
+}
+
+.revealCaptionNote {
+  color: var(--muted);
+  font-size: clamp(0.8rem, 1vw, 0.98rem);
+}
+
+.revealStill {
+  max-width: var(--content-width);
+  margin: 0 auto;
+  padding: 8vh var(--pad-x);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.revealStillImage {
+  width: 100%;
+  height: auto;
+  margin-bottom: 1.4rem;
+}
+
+/* Where the colour comes from — 10.2s at the head of the Folio. */
+.folioOpening {
+  position: relative;
+  height: 300vh;
+  background: var(--graphite);
+}
+
+/* Legibility is not optional here: the film alternates cream pages with
+   photographs, so no single text colour survives on its own. A feathered
+   vignette from the bottom guarantees ground under the copy without reading as
+   a bar, and stays warm rather than neutral grey so it sits inside the
+   palette. */
+.filmScrim {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  background: linear-gradient(
+    to top,
+    rgb(30 27 22 / 0.72) 0%,
+    rgb(30 27 22 / 0.52) 16%,
+    rgb(30 27 22 / 0.2) 34%,
+    transparent 52%
+  );
+}
+
+/* One statement on screen at a time; they share this box and cross-fade. */
+.filmBeat {
+  position: absolute;
+  left: var(--pad-x);
+  right: var(--pad-x);
+  bottom: 9vh;
+  z-index: 6;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  max-width: var(--content-width);
+  margin: 0 auto;
+  pointer-events: none;
+}
+
+/* Bodoni Moda, large and open — the editorial register the brief reserves for
+   statements over an image. */
+.filmBeatLine {
+  color: var(--paper);
+  font-size: clamp(1.5rem, 3.1vw, 2.9rem);
+  line-height: 1.22;
+  max-width: 20ch;
+  text-wrap: balance;
+  text-shadow: 0 1px 26px rgb(20 18 14 / 0.55);
+}
+
+.filmBeatLine.isStatic {
+  color: var(--graphite);
+  text-shadow: none;
+  margin-bottom: 1.4rem;
+}
+
+.filmBeatNotes {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  max-width: 46ch;
+}
+
+.filmBeatNote {
+  color: rgb(237 223 201 / 0.82);
+  font-size: clamp(0.92rem, 1.15vw, 1.08rem);
+  line-height: 1.45;
+  text-shadow: 0 1px 16px rgb(20 18 14 / 0.5);
+}
+
+.filmHandover {
+  position: absolute;
+  left: var(--pad-x);
+  right: var(--pad-x);
+  bottom: 9vh;
+  z-index: 7;
+  max-width: var(--content-width);
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  pointer-events: none;
+}
+
+.filmHandoverLine {
+  color: var(--paper);
+  font-size: clamp(1.6rem, 3.4vw, 3.2rem);
+  line-height: 1.18;
+  max-width: 22ch;
+  text-wrap: balance;
+  text-shadow: 0 1px 26px rgb(20 18 14 / 0.55);
+}
+
+.filmHandoverLabel {
+  color: rgb(237 223 201 / 0.78);
+}
+
+.filmStillCopy {
+  position: relative;
+  z-index: 6;
+  padding: 8vh var(--pad-x);
+  max-width: var(--content-width);
+  margin: 0 auto;
+  background: var(--paper);
+}
+
+.folioOpeningKicker {
+  position: absolute;
+  top: calc(var(--nav-pad-y) * 2 + 2.4rem);
+  left: var(--pad-x);
+  z-index: 4;
+  color: rgb(237 223 201 / 0.85);
+}
+
+@media (max-width: 767px) {
+  .filmBeatLine {
+    max-width: 100%;
+  }
+  .filmBeat,
+  .filmHandover {
+    bottom: 7vh;
+  }
+}
+
+.heroSticky {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  height: 100dvh;
+  overflow: hidden;
+  display: grid;
+  place-items: center;
+}
+
+.heroCopy {
+  position: absolute;
+  top: calc(var(--nav-pad-y) * 2 + 2.4rem);
+  left: var(--pad-x);
+  right: var(--pad-x);
+  z-index: 4;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  max-width: var(--content-width);
+  margin: 0 auto;
+}
+
+.heroSub {
+  max-width: var(--text-width);
+  color: var(--muted);
+}
+
+.heroMetaRow {
+  display: flex;
+  gap: 22px;
+  flex-wrap: wrap;
+}
+
+.firstLine {
+  position: absolute;
+  width: min(74vmin, 720px);
+  z-index: 3;
+}
+
+.scrollHint {
+  position: absolute;
+  bottom: 5vh;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 4;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+.scrollHintText {
+  font-family: var(--font-sans), system-ui, sans-serif;
+  font-size: 0.72rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+/* A double-headed arrow rather than the usual downward chevron: the whole
+   point of this hint is that the film is scrubbed in both directions. */
+.scrollHintGlyph {
+  width: 10px;
+  height: 25px;
+  display: block;
+  fill: none;
+  stroke: var(--muted);
+  stroke-width: 1.3;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.scrollHintArrows {
+  display: block;
+  animation: scrollHintBob 2.6s ease-in-out infinite;
+}
+
+@keyframes scrollHintBob {
+  0%, 100% { transform: translateY(-2px); }
+  50% { transform: translateY(2px); }
+}
+
+/* Page arrows. Under the book, never over it — an arrow sitting on the plate
+   would be the one piece of UI covering the thing it navigates. */
+.filmBookPager {
+  position: absolute;
+  left: clamp(16px, 3vw, 40px);
+  bottom: 5vh;
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.filmBookPage {
+  width: 38px;
+  height: 38px;
+  display: grid;
+  place-items: center;
+  border: 1px solid color-mix(in srgb, var(--muted) 34%, transparent);
+  border-radius: 50%;
+  background: none;
+  color: var(--muted);
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: color 0.25s ease, border-color 0.25s ease, opacity 0.25s ease;
+}
+
+.filmBookPage:hover:not(:disabled),
+.filmBookPage:focus-visible:not(:disabled) {
+  color: var(--graphite);
+  border-color: color-mix(in srgb, var(--graphite) 45%, transparent);
+}
+
+.filmBookPage:disabled {
+  opacity: 0.3;
+  cursor: default;
+}
+
+.filmBookPageNum {
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+  min-width: 3.4em;
+  text-align: center;
+}
+
+.filmBookSkip {
+  position: absolute;
+  right: clamp(16px, 3vw, 40px);
+  bottom: 5vh;
+  z-index: 5;
+  background: none;
+  border: 1px solid color-mix(in srgb, var(--muted) 34%, transparent);
+  border-radius: 999px;
+  padding: 9px 16px;
+  color: var(--muted);
+  cursor: pointer;
+  transition: color 0.25s ease, border-color 0.25s ease;
+}
+
+.filmBookSkip:hover,
+.filmBookSkip:focus-visible {
+  color: var(--graphite);
+  border-color: color-mix(in srgb, var(--graphite) 45%, transparent);
+}
+
+@media (max-width: 720px) {
+  /* Three controls along one edge do not fit at this width, so they stack:
+     hint on top, pager, then the way out. */
+  .filmBookSkip {
+    right: 50%;
+    transform: translateX(50%);
+    bottom: 1.5vh;
+  }
+
+  .filmBookPager {
+    left: 50%;
+    transform: translateX(-50%);
+    bottom: 6vh;
+  }
+
+  .filmBookPage {
+    width: 32px;
+    height: 32px;
+  }
+
+  .scrollHint {
+    bottom: 12vh;
+  }
+
+  .scrollHintText {
+    font-size: 0.62rem;
+    letter-spacing: 0.1em;
+    white-space: normal;
+    max-width: 60vw;
+  }
+}
+
+/* Explore or Play — a choice about how the itinerary is taken, not a filter,
+   so the two read as one control with a selected half. */
+.jtModes {
+  display: inline-flex;
+  margin-top: 18px;
+  padding: 3px;
+  border: 1px solid color-mix(in srgb, var(--jt-orange) 34%, transparent);
+  border-radius: 999px;
+}
+
+.jtMode {
+  font-family: var(--font-sans), system-ui, sans-serif;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  padding: 8px 20px;
+  border: 0;
+  border-radius: 999px;
+  background: none;
+  color: var(--jt-orange);
+  cursor: pointer;
+  transition: background-color 0.28s ease, color 0.28s ease;
+}
+
+.jtMode[aria-pressed="true"] {
+  background: var(--jt-orange);
+  color: var(--paper);
+}
+
+.jtMode:focus-visible {
+  outline: 2px solid var(--jt-orange);
+  outline-offset: 2px;
+}
+
+.jtModeHint {
+  margin-top: 10px;
+  font-size: 0.82rem;
+  color: var(--muted);
+}
+
+/* The book is a real object: board, page block with a visible fore-edge,
+   cloth cover on a top hinge, and two shadows that behave independently
+   (short contact shadow + long cast shadow). Camera push is a translateZ
+   dolly on .bookWrap, so the page edges leave the frame instead of a
+   rectangle scaling up — see SketchbookHero. */
+
+.tiltWrap {
+  perspective: var(--book-perspective, 1600px);
+  perspective-origin: 50% 42%;
+  z-index: 2;
+  transform-style: preserve-3d;
+  /* Deliberately no `transform` here. SketchbookHero writes rotateX/rotateY on
+     this element for the pointer tilt, and motion rebuilds the whole transform
+     string — any translate declared here is silently discarded. It also has to
+     stay centred in the sticky viewport, because the dolly solves the target
+     depth against the perspective origin assuming exactly that. Offset a
+     child instead. */
+}
+
+.bookWrap {
+  position: relative;
+  width: min(76vw, 620px);
+  aspect-ratio: 3 / 2;
+  transform-style: preserve-3d;
+}
+
+/* Long, soft shadow thrown on the imaginary table. Detached from the object
+   so it can shorten and soften as the cover lifts weight off the block. */
+.bookCast {
+  position: absolute;
+  left: -9%;
+  right: -9%;
+  bottom: -9%;
+  height: 22%;
+  background: radial-gradient(
+    52% 100% at 50% 0%,
+    rgb(26 24 21 / 0.5),
+    rgb(26 24 21 / 0.18) 55%,
+    transparent 76%
+  );
+  filter: blur(16px);
+  transform: translateZ(-18px);
+  z-index: 0;
+}
+
+/* Short, dark contact shadow directly under the block — reads as weight. */
+.bookContact {
+  position: absolute;
+  left: 2%;
+  right: 2%;
+  bottom: -2.5%;
+  height: 5%;
+  background: radial-gradient(
+    50% 100% at 50% 0%,
+    rgb(20 18 16 / 0.62),
+    transparent 70%
+  );
+  filter: blur(5px);
+  transform: translateZ(-6px);
+  z-index: 0;
+}
+
+/* Back board + stacked leaves. */
+.bookBlock {
+  position: absolute;
+  inset: -2.5% -2%;
+  transform-style: preserve-3d;
+  z-index: 1;
+}
+
+.bookBack {
+  position: absolute;
+  inset: 0;
+  border-radius: 10px;
+  background:
+    linear-gradient(
+      170deg,
+      rgb(255 255 255 / 0.06),
+      transparent 34%
+    ),
+    var(--cloth-weave),
+    var(--linen);
+  background-blend-mode: normal, overlay, normal;
+}
+
+/* Each leaf sits a fraction of a pixel forward; under perspective their
+   bottom and side edges read as the fore-edge of a real page block. */
+.leaf {
+  position: absolute;
+  inset: 0;
+  border-radius: 6px;
+  background: linear-gradient(180deg, #efe6d4 0%, #e6dbc6 62%, #d9cdb4 100%);
+  box-shadow:
+    0 0 0 0.5px rgb(122 106 84 / 0.28),
+    0 1px 1px -1px rgb(60 50 38 / 0.4);
+}
+
+/* Cylindrical hinge along the top edge, where the leaves are bound. */
+.bookHinge {
+  position: absolute;
+  top: 0;
+  left: 1%;
+  right: 1%;
+  height: 3.4%;
+  border-radius: 10px 10px 3px 3px;
+  background: linear-gradient(
+    180deg,
+    #2b2823 0%,
+    #494339 38%,
+    #211f1c 100%
+  );
+  box-shadow: 0 2px 5px -2px rgb(20 18 16 / 0.7);
+  /* Inside preserve-3d, paint order comes from real Z, not z-index: the
+     binding has to sit in front of the page it holds. Depth ladder for the
+     book is cast -18 · contact -6 · board 0 · leaves 0–7 · page 8 ·
+     hinge 10 · cover 12. */
+  transform: translateZ(10px);
+}
+
+.pageWrap {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  background: var(--paper-shadow);
+  transform-origin: center center;
+  transform: translateZ(8px); /* sits just above the leaf stack */
+}
+
+/* The reel that becomes the hero's background once the book pulls back.
+   Source is 9:16, so a desktop viewport crops it hard — that is accepted:
+   at that point the visitor is looking at OUR book, and the reel is the
+   place behind it. On phones it fits natively. */
+.heroReel {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 50% 50%;
+  z-index: 0;
+  /* Deliberately NOT --film-grade. That token exists to pull the digital cyan
+     out of the 480p camp proxy, and the opening film no longer contains any:
+     its real footage is proper photography, and its watercolour passages were
+     colour-matched to the artwork by measurement (see ASSET-MANIFEST, Gen 06).
+     A sepia + hue-rotate on top would walk the sand back off the target. */
+}
+
+.heroReelVeil {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: var(--paper);
+  pointer-events: none;
+}
+
+/* What the cover opens onto: paper, carrying scene 00's contour. */
+.pagePaper {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(120% 90% at 50% 30%, #fbf6ea, transparent 70%),
+    var(--paper-plate);
+}
+
+.pageDrawing {
+  position: absolute;
+  inset: 8% 7%;
+  width: 86%;
+  height: 84%;
+  overflow: visible;
+}
+
+/* Paper bowing away from the hinge + darkened gutter and outer edges.
+   This is what stops the video reading as a flat UI rectangle. */
+.pageCurve {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  mix-blend-mode: multiply;
+  background:
+    linear-gradient(
+      180deg,
+      rgb(34 29 24 / 0.46) 0%,
+      rgb(34 29 24 / 0.16) 5%,
+      rgb(34 29 24 / 0.02) 14%,
+      transparent 26%
+    ),
+    linear-gradient(
+      90deg,
+      rgb(34 29 24 / 0.2) 0%,
+      transparent 7%,
+      transparent 93%,
+      rgb(34 29 24 / 0.2) 100%
+    ),
+    linear-gradient(0deg, rgb(34 29 24 / 0.14) 0%, transparent 9%);
+}
+
+/* Light catching the bowed sheet just below the hinge. */
+.pageSheen {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  mix-blend-mode: soft-light;
+  background: linear-gradient(
+    180deg,
+    transparent 6%,
+    rgb(255 252 244 / 0.34) 15%,
+    transparent 34%
+  );
+}
+
+/* Shadow the open cover throws down onto the page. Opacity is driven from
+   the cover angle in SketchbookHero, not by a fixed transition. */
+.coverCast {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    180deg,
+    rgb(18 16 14 / 0.8) 0%,
+    rgb(18 16 14 / 0.42) 34%,
+    transparent 72%
+  );
+}
+
+.cover {
+  position: absolute;
+  inset: -2.5% -2%;
+  transform-origin: 50% 0%;
+  /* Depth (z: 12) is set in SketchbookHero because motion owns this
+     element's transform; z-index would be ignored under preserve-3d. */
+  border-radius: 10px;
+  background:
+    radial-gradient(120% 90% at 30% 18%, rgb(255 255 255 / 0.07), transparent 62%),
+    var(--cloth-weave),
+    var(--linen);
+  background-blend-mode: normal, overlay, normal;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.9rem;
+  color: var(--paper);
+  box-shadow:
+    inset 0 -1px 0 rgb(255 255 255 / 0.07),
+    0 18px 45px -18px rgb(47 49 50 / 0.55);
+}
+
+/* Board thickness on the cover's free edge. */
+.coverEdge {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -3px;
+  height: 4px;
+  border-radius: 0 0 4px 4px;
+  background: linear-gradient(180deg, #3a352e, #23211d);
+}
+
+.coverLockup {
+  color: var(--paper);
+  letter-spacing: 0.3em;
+}
+
+.coverSub {
+  color: var(--pale-sky);
+  font-size: 0.62rem;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+}
+
+.heroHeadlineWrap {
+  position: absolute;
+  inset: 0;
+  z-index: 8;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  padding-bottom: 12vh;
+  text-align: center;
+  pointer-events: none;
+}
+
+.heroHeadline {
+  font-size: clamp(1.9rem, 4.2vw, 3.4rem);
+  line-height: 1.12;
+  color: #fff;
+  max-width: 18ch;
+  text-shadow: 0 2px 24px rgb(0 0 0 / 0.45);
+}
+
+.heroFilmMeta {
+  margin-top: 1.1rem;
+  color: rgb(255 255 255 / 0.85);
+  text-shadow: 0 1px 12px rgb(0 0 0 / 0.5);
+}
+
+/* ---------- signature scene: reality + sketchbook ---------- */
+
+.signature {
+  position: relative;
+  height: 340vh;
+  background: var(--graphite);
+}
+
+.signatureSticky {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  height: 100dvh;
+  overflow: hidden;
+  display: grid;
+  place-items: center;
+}
+
+/* Scrubbed variant (SignatureFilm): longer, because 18.6s of film needs room —
+   320vh of scroll ≈ 17vh per second of film. Tune the pace here. */
+.signature.isFilm {
+  height: 500vh;
+}
+
+.signatureFilm {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: var(--film-grade);
+}
+
+/* Artwork, not camp footage: the grade exists to pull digital cyan out of the
+   480p proxy, and would shift watercolour that was never shot through a lens. */
+.signatureFilm.isArtwork {
+  filter: none;
+}
+
+.signatureFilmDim {
+  position: absolute;
+  inset: 0;
+  background: var(--graphite);
+  pointer-events: none;
+}
+
+.signatureKicker {
+  position: absolute;
+  top: 12vh;
+  left: 0;
+  right: 0;
+  text-align: center;
+  z-index: 4;
+  color: var(--paper);
+  text-shadow: 0 1px 14px rgb(0 0 0 / 0.55);
+}
+
+/* The book is held low in the frame, as in Ref0 — the real view stays
+   visible above it, which is the entire point of the scene. */
+.signatureBook {
+  position: absolute;
+  bottom: -6vh;
+  width: min(78vw, 940px);
+  aspect-ratio: 1392 / 752;
+  z-index: 3;
+  /* Perspective lives here so the spread can be tilted back on its lower edge
+     the way a held book is, then turned flat to camera. */
+  perspective: 1500px;
+  perspective-origin: 50% 30%;
+}
+
+.signatureCast {
+  position: absolute;
+  inset: -3% -2% -6%;
+  background: radial-gradient(
+    58% 70% at 50% 60%,
+    rgb(16 14 12 / 0.6),
+    transparent 74%
+  );
+  filter: blur(22px);
+}
+
+.signatureSpread {
+  position: absolute;
+  inset: 0;
+  border-radius: 4px;
+  overflow: hidden;
+  /* Anchored near its lower edge: the book pivots where the hand holds it,
+     rather than spinning about its middle. */
+  transform-origin: 50% 92%;
+  box-shadow:
+    0 1px 0 rgb(255 255 255 / 0.14),
+    0 26px 60px -30px rgb(16 14 12 / 0.8);
+}
+
+.signaturePaper {
+  position: absolute;
+  inset: 0;
+  background: var(--paper-plate);
+}
+
+/* Gutter of the open spread, plus a little vignette at the outer edges. */
+.signatureGutter {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 3;
+  mix-blend-mode: multiply;
+  background:
+    linear-gradient(
+      90deg,
+      transparent 47%,
+      rgb(58 48 36 / 0.2) 49.6%,
+      rgb(58 48 36 / 0.26) 50%,
+      rgb(58 48 36 / 0.2) 50.4%,
+      transparent 53%
+    ),
+    linear-gradient(90deg, rgb(58 48 36 / 0.16), transparent 6%),
+    linear-gradient(270deg, rgb(58 48 36 / 0.16), transparent 6%);
+}
+
+/* multiply drops the generated file's own cream paper to nothing, so only
+   ink and pigment survive and the marks sit on OUR page. */
+.sketchArt {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  mix-blend-mode: multiply;
+  z-index: 2;
+}
+
+.sketchGraphite {
+  filter: grayscale(1) contrast(1.15) brightness(1.08);
+}
+
+/* Soft wet edge travelling left→right. --sweep is the leading edge in %. */
+.sketchColour {
+  --sweep: -12;
+  -webkit-mask-image: linear-gradient(
+    90deg,
+    #000 calc(var(--sweep) * 1% - 16%),
+    rgb(0 0 0 / 0.55) calc(var(--sweep) * 1% - 5%),
+    transparent calc(var(--sweep) * 1%)
+  );
+  mask-image: linear-gradient(
+    90deg,
+    #000 calc(var(--sweep) * 1% - 16%),
+    rgb(0 0 0 / 0.55) calc(var(--sweep) * 1% - 5%),
+    transparent calc(var(--sweep) * 1%)
+  );
+}
+
+.signatureAnnotation {
+  position: absolute;
+  left: 4.5%;
+  /* Clear of the spread's lower edge: the book sits partly below the fold and
+     scales up at the alignment, so anything under ~14% gets cut off. */
+  bottom: 15%;
+  z-index: 4;
+  margin: 0;
+  white-space: pre-line;
+  font-size: clamp(0.95rem, 1.5vw, 1.3rem);
+  line-height: 1.25;
+  color: rgb(74 62 46 / 0.86);
+}
+
+@media (max-width: 809px) {
+  .signature {
+    height: 300vh;
+  }
+  /* A 16:9 spread is only ~24% of a tall phone — too small for the echo to
+     register. Go to a near-square single page: `object-fit: cover` crops the
+     artwork to its centre (window, ridge, river), which is the part that has
+     to rhyme with the footage above. */
+  .signatureBook {
+    /* Capped against the viewport height as well as its width: on a short or
+       wide viewport that still trips this breakpoint, 92vw alone let the page
+       grow past the fold at the presentation and swallow the real view —
+       which is the one thing this scene cannot afford to lose. */
+    width: min(92vw, 48vh);
+    aspect-ratio: 1 / 1;
+    bottom: -2vh;
+  }
+  .signatureGutter {
+    display: none; /* one page, so no gutter */
+  }
+  .signatureAnnotation {
+    bottom: 8%;
+  }
+  .signatureKicker {
+    top: 9vh;
+  }
+}
+
+/* ---------- intro ---------- */
+
+.introSection {
+  max-width: var(--editorial-width);
+  padding-top: var(--section-pad);
+  padding-bottom: var(--section-pad);
+  display: flex;
+  flex-direction: column;
+  gap: 36px;
+}
+
+.introStatement {
+  max-width: var(--statement-width);
+}
+
+.introSupport {
+  max-width: var(--support-width);
+  color: var(--muted);
+}
+
+/* ---------- artist vision (scene styles) ---------- */
+
+.vision {
+  position: relative;
+  /* One viewport, no scrub distance: the push plays itself now (see
+     ArtistVision), so the 340vh that gave the wheel room to drive it — a
+     2,700px walk on a phone — has nothing left to do. */
+  height: 100vh;
+  height: 100dvh;
+  background: var(--graphite);
+}
+
+.visionSticky {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  height: 100dvh;
+  overflow: hidden;
+}
+
+/* The photograph's own frame. Sized to cover the viewport while holding
+   1200/743 exactly, which is what lets the clip planes and the traced ridge
+   use the coordinates measured off the photo — object-fit: cover on a
+   viewport-shaped box would crop the terrain out from under them. */
+.visionStage {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  /* min, not max: contain instead of cover. `max` cropped to fill the
+     viewport, which on a portrait phone blew the photograph up to ~1,300px
+     wide and showed a third of it — the client's "too zoomed in". The whole
+     confluence now letterboxes on the graphite ground instead, and the clip
+     planes keep their measured coordinates because the box still holds the
+     photo's exact aspect. */
+  width: min(100vw, 161.51vh);
+  aspect-ratio: 1200 / 743;
+}
+
+/* Dead CSS from the old three-plane 3D depth system. Kept for reference in
+   git history; the component now renders a single still photograph. */
+
+.visionPlate {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  /* contain, not cover: show the entire photograph, not a cropped fill. */
+  object-fit: contain;
+  display: block;
+}
+
+.visionInk {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+/* The photograph is bright — pale sky, pale scree — and the copy is set light.
+   A feathered corner rather than a bar, so the picture is not boxed. */
+.visionScrim {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    18deg,
+    rgb(24 22 18 / 0.82) 0%,
+    rgb(24 22 18 / 0.5) 26%,
+    rgb(24 22 18 / 0.12) 46%,
+    transparent 62%
+  );
+}
+
+.observed {
+  position: absolute;
+  inset: 0;
+  mask-repeat: no-repeat;
+  -webkit-mask-repeat: no-repeat;
+  mask-size: 58vmin 46vmin;
+  -webkit-mask-size: 58vmin 46vmin;
+}
+
+.observedPaper {
+  position: absolute;
+  inset: 0;
+  background: var(--paper);
+  opacity: 0.94;
+}
+
+/* Pigment never dries evenly. Without this the wash reads as a flat cut-out
+   pasted on the film, however good its edge is: two noise scales, one for
+   settling pigment and one for paper tooth, multiplied over the paper. */
+.observedGrain {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  mix-blend-mode: multiply;
+  opacity: 0.5;
+  background-image:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='420' height='420'%3E%3Cfilter id='m'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.018' numOctaves='3' seed='5'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3CfeComponentTransfer%3E%3CfeFuncA type='linear' slope='0.5'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23m)'/%3E%3C/svg%3E"),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='t'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' seed='2'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3CfeComponentTransfer%3E%3CfeFuncA type='linear' slope='0.22'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23t)'/%3E%3C/svg%3E");
+  background-size: 420px 420px, 160px 160px;
+}
+
+.observedArtBox {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 58vmin;
+  height: 46vmin;
+  will-change: transform;
+}
+
+.observedArt {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.visionContour {
+  position: absolute;
+  top: 6vh;
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(100vw, 1300px);
+  pointer-events: none;
+}
+
+.visionText {
+  position: absolute;
+  left: var(--pad-x);
+  bottom: 10vh;
+  z-index: 6;
+  max-width: 34ch;
+  color: var(--paper);
+  text-shadow: 0 1px 16px rgb(0 0 0 / 0.4);
+}
+
+.visionText h2 {
+  font-size: var(--chapter-size);
+  line-height: 1.1;
+  margin: 0.6rem 0 0.8rem;
+}
+
+.visionText p {
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: rgb(242 235 221 / 0.92);
+}
+
+.visionKicker {
+  color: var(--apricot);
+}
+
+.visionHint {
+  margin-top: 1rem;
+  color: rgb(242 235 221 / 0.66);
+}
+
+.swatchGroup {
+  position: absolute;
+  right: clamp(1rem, 8vw, 9rem);
+  top: 16vh;
+  z-index: 6;
+  width: clamp(150px, 19vw, 230px);
+}
+
+.swatchSvg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.swatchLabel {
+  margin-top: 0.35rem;
+  font-size: clamp(1rem, 1.6vw, 1.3rem);
+  color: var(--paper);
+  text-shadow: 0 1px 10px rgb(0 0 0 / 0.45);
+}
+
+.annotation {
+  position: absolute;
+  right: clamp(1rem, 9vw, 10rem);
+  top: 38vh;
+  z-index: 6;
+  width: clamp(180px, 22vw, 260px);
+  color: var(--paper);
+}
+
+.annotation svg {
+  display: block;
+}
+
+.annotationText {
+  font-size: clamp(1.05rem, 1.7vw, 1.35rem);
+  line-height: 1.3;
+  text-shadow: 0 1px 10px rgb(0 0 0 / 0.45);
+}
+
+/* ---------- creative pillars ---------- */
+
+.pillars {
+  max-width: var(--content-width);
+  padding-top: 70px;
+  padding-bottom: var(--section-pad);
+  display: flex;
+  flex-direction: column;
+  gap: var(--chapter-stack-gap);
+}
+
+.pillarRow {
+  display: flex;
+  align-items: center;
+  gap: var(--chapter-gap);
+  max-width: var(--editorial-width);
+  width: 100%;
+  margin: 0 auto;
+}
+
+.pillarCopy {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.pillarCopy .typoBody {
+  color: var(--muted);
+  max-width: 46ch;
+}
+
+.pillarResult {
+  color: var(--graphite);
+  border-top: 1px solid var(--hairline);
+  padding-top: 12px;
+  margin-top: 6px;
+  width: fit-content;
+}
+
+.pillarMedia {
+  width: 48%;
+  flex-shrink: 0;
+  height: var(--chapter-media-h);
+  overflow: hidden;
+}
+
+.pillarMedia img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.pillarMedia {
+  position: relative;
+}
+
+/* The media box is a viewport onto a small world: the footage drifts inside
+   it while the study is drawn over the top. overflow:hidden on .pillarMedia
+   is what makes the drift read as depth rather than as the image moving. */
+.pillarMedia img {
+  transform-origin: center;
+  scale: 1.1; /* headroom for the parallax drift, so no edge is exposed */
+}
+
+.pillarStudy {
+  position: absolute;
+  inset: 8%;
+  width: 84%;
+  height: 84%;
+  overflow: visible;
+  pointer-events: none;
+  filter: drop-shadow(0 1px 3px rgb(20 18 16 / 0.45));
+}
+
+/* Texture has no source footage: its world is the weave itself, on paper. */
+.pillarMediaStudy {
+  border: 1px solid rgb(52 53 54 / 0.28);
+}
+
+.pillarWeaveGround {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(120% 90% at 50% 30%, #efe4d2, transparent 70%),
+    var(--clay);
+}
+
+.pillarStudyNote {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 10px;
+  text-align: center;
+  color: var(--paper);
+  opacity: 0.75;
+}
+
+/* ---------- camp ---------- */
+
+.campSection {
+  max-width: var(--content-width);
+  padding-top: var(--section-pad-camp);
+  padding-bottom: var(--section-pad-camp);
+  display: flex;
+  flex-direction: column;
+  gap: 34px;
+}
+
+.campSupport {
+  color: var(--muted);
+}
+
+.campMedia {
+  width: 100%;
+  height: var(--media-h);
+  object-fit: cover;
+}
+
+.campDetails {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px 28px;
+}
+
+/* ---------- nine days ---------- */
+
+.nineDays {
+  max-width: var(--editorial-width);
+  padding-top: var(--section-pad-tight);
+  padding-bottom: var(--section-pad-tight);
+  display: flex;
+  flex-direction: column;
+  gap: 48px;
+}
+
+.dayLedger {
+  list-style: none;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  column-gap: 30px;
+}
+
+.dayRow {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 16px 0;
+  border-bottom: 1px solid var(--hairline);
+}
+
+.dayValue {
+  font-size: var(--ledger-size);
+}
+
+.daySep {
+  color: var(--muted);
+  padding: 0 0.2em;
+}
+
+.nineDaysHead {
+  max-width: 62ch;
+}
+
+.nineDaysSub {
+  color: var(--muted);
+  margin-top: 12px;
+}
+
+/* The frieze. Height-capped so the ridge reads as a range rather than a
+   chart stretched across a wide screen. */
+.ridgeWrap {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.ridge {
+  width: 100%;
+  min-width: 620px;
+  height: auto;
+  display: block;
+}
+
+.ridgeMass {
+  fill: var(--indus);
+  opacity: 0.14;
+}
+
+.ridgeLine {
+  fill: none;
+  stroke: var(--graphite);
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.ridgeDot {
+  fill: var(--paper);
+  stroke: var(--graphite);
+  stroke-width: 1.6;
+}
+
+.ridgeDay {
+  font-family: var(--font-sans), system-ui, sans-serif;
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  fill: var(--graphite);
+}
+
+.ridgeAlt {
+  font-family: var(--font-sans), system-ui, sans-serif;
+  font-size: 9px;
+  letter-spacing: 0.08em;
+  fill: var(--muted);
+}
+
+.ridgePass {
+  font-family: var(--font-sans), system-ui, sans-serif;
+  font-size: 9.5px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  fill: var(--muted);
+}
+
+.ridgePassTick {
+  stroke: var(--muted);
+  stroke-width: 1;
+  stroke-dasharray: 2 3;
+}
+
+/* The days themselves, below the profile they trace. */
+.dayCards {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
+  gap: 26px 34px;
+}
+
+.dayCard {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-top: 16px;
+  border-top: 1px solid var(--hairline);
+}
+
+.dayCardHead {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+}
+
+.dayCardNum {
+  color: var(--muted);
+}
+
+.dayCardPlace {
+  font-size: 1.06rem;
+  line-height: 1.2;
+}
+
+.daySep {
+  color: var(--muted);
+  padding: 0 0.18em;
+}
+
+.dayCardSummary {
+  color: var(--graphite);
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+.dayCardMeta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 14px;
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+
+.dayCardMove {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.moveIcon {
+  width: 17px;
+  height: 17px;
+  flex: none;
+}
+
+.dayCardAlt {
+  font-family: var(--font-serif), Georgia, serif;
+  font-size: 0.95rem;
+  color: var(--graphite);
+}
+
+.dayCardTools {
+  color: var(--muted);
+  font-size: 0.86rem;
+}
+
+.dayCaveat {
+  color: var(--muted);
+  max-width: 74ch;
+  font-style: italic;
+}
+
+/* ---------- the contract: dates, price, inclusions, altitude, kit ---------- */
+
+.booking {
+  padding-top: var(--section-pad-tight);
+  padding-bottom: var(--section-pad-tight);
+  padding-left: var(--pad-x);
+  padding-right: var(--pad-x);
+  max-width: var(--content-width);
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 46px;
+  background: var(--paper);
+}
+
+.bookingLead {
+  margin-top: 12px;
+  max-width: 60ch;
+  color: var(--muted);
+}
+
+.bookingTable {
+  margin: 0;
+  border-top: 1px solid var(--hairline);
+}
+
+.bookingRow {
+  display: grid;
+  grid-template-columns: minmax(140px, 210px) 1fr;
+  gap: 10px 24px;
+  padding: 14px 0;
+  border-bottom: 1px solid var(--hairline);
+}
+
+.bookingRow dd {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  font-size: 1rem;
+}
+
+.bookingHint {
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+/* Unconfirmed values are meant to be impossible to miss in review, and gone
+   before launch. Not a placeholder style — a flag. */
+.toConfirm {
+  display: inline-block;
+  font-family: var(--font-sans), system-ui, sans-serif;
+  font-size: 0.68rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #8a5a2b;
+  background: rgb(196 132 62 / 0.13);
+  border: 1px dashed rgb(138 90 43 / 0.5);
+  border-radius: 2px;
+  padding: 2px 8px;
+}
+
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.bookingLists {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 34px;
+}
+
+.bookingList ul {
+  list-style: none;
+  margin: 12px 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+}
+
+.bookingList li {
+  position: relative;
+  padding-left: 18px;
+  font-size: 0.94rem;
+  line-height: 1.5;
+  color: var(--graphite);
+}
+
+.bookingList li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.62em;
+  width: 7px;
+  height: 1px;
+  background: var(--muted);
+}
+
+.altitudeBlock,
+.kitBlock {
+  border-top: 1px solid var(--hairline);
+  padding-top: 30px;
+  max-width: 74ch;
+}
+
+.altitudeHeading {
+  font-size: clamp(1.25rem, 2vw, 1.75rem);
+  margin-bottom: 12px;
+}
+
+.altitudeList {
+  list-style: none;
+  margin: 16px 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.altitudeList li {
+  position: relative;
+  padding-left: 18px;
+  font-size: 0.94rem;
+  line-height: 1.5;
+  color: var(--muted);
+}
+
+.altitudeList li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.62em;
+  width: 7px;
+  height: 1px;
+  background: var(--muted);
+}
+
+.kitList {
+  margin: 18px 0 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 16px 30px;
+}
+
+.kitItem dt {
+  font-family: var(--font-sans), system-ui, sans-serif;
+  font-size: 0.68rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--graphite);
+  margin-bottom: 4px;
+}
+
+.kitItem dd {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.9rem;
+  line-height: 1.45;
+}
+
+.bookingPriceNote {
+  color: var(--muted);
+  font-style: italic;
+  max-width: 74ch;
+  margin-top: -28px;
+}
+
+.bookingOperator {
+  border-top: 1px solid var(--hairline);
+  padding-top: 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  color: var(--graphite);
+}
+
+.bookingOperatorLine {
+  color: var(--muted);
+}
+
+@media (max-width: 767px) {
+  .bookingRow {
+    grid-template-columns: 1fr;
+    gap: 4px;
+  }
+  .dayMeta {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+/* ---------- folio ---------- */
+
+/* The climax: one composition held for 520vh, ending on a long hold where
+   nothing moves. Every mark is a live layer — paper, SVG, wash, notes —
+   never a flattened image (see ASSET-MANIFEST). */
+
+.folio {
+  position: relative;
+  height: 520vh;
+  background: var(--paper);
+}
+
+.folioSticky {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  height: 100dvh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(18px, 3vh, 34px);
+  padding: 4vh var(--pad-x);
+  text-align: center;
+}
+
+.folioHead {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+}
+
+.folioSupport {
+  max-width: 500px;
+  color: var(--muted);
+}
+
+.folioPlate {
+  position: relative;
+  width: min(860px, 100%);
+  aspect-ratio: 860 / 560;
+  max-height: 62vh;
+  background:
+    radial-gradient(120% 90% at 50% 24%, #fdf9ef, transparent 72%),
+    var(--paper-plate);
+  box-shadow:
+    0 1px 0 rgb(52 53 54 / 0.08),
+    0 24px 60px -40px rgb(52 53 54 / 0.35);
+}
+
+.folioArt {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+/* Notes are positioned as fractions of the plate so they stay pinned to the
+   marks they annotate at every size. */
+.folioNotes {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.folioNote {
+  position: absolute;
+  margin: 0;
+  white-space: pre-line;
+  font-size: clamp(0.72rem, 1.35vw, 1.02rem);
+  line-height: 1.24;
+  color: rgb(74 62 46 / 0.84);
+  text-align: left;
+}
+
+.folioNoteArch {
+  left: 6.5%;
+  top: 58%;
+}
+
+.folioNotePigment {
+  left: 64%;
+  top: 58%;
+}
+
+.folioNoteBotany {
+  left: 34%;
+  top: 79%;
+}
+
+.folioCorners {
+  position: absolute;
+  inset: 0;
+  padding: clamp(14px, 2.4%, 26px);
+  display: flex;
+  flex-wrap: wrap;
+  align-content: space-between;
+  justify-content: space-between;
+  pointer-events: none;
+}
+
+.folioCorners > * {
+  flex: 0 0 auto;
+}
+
+.folioPlaceholder {
+  color: var(--muted);
+  opacity: 0.7;
+}
+
+/* ---------- host ---------- */
+
+.hostSection {
+  max-width: var(--editorial-width);
+  padding-top: var(--section-pad-camp);
+  padding-bottom: var(--section-pad-camp);
+  display: flex;
+  align-items: center;
+  gap: 76px;
+}
+
+/* Holds the photograph now rather than a labelled placeholder. Aspect-locked
+   to the exported 4:5 crop so the column cannot letterbox it. */
+.hostPortrait {
+  width: 45%;
+  flex-shrink: 0;
+  aspect-ratio: 4 / 5;
+  max-height: 620px;
+  overflow: hidden;
+  background: var(--media-tint-ochre);
+}
+
+.hostPortraitImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.hostFacts {
+  margin: 10px 0 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  gap: 14px 26px;
+  border-top: 1px solid var(--hairline);
+  padding-top: 20px;
+}
+
+.hostFact dd {
+  margin: 4px 0 0;
+  font-size: 0.94rem;
+  line-height: 1.4;
+  color: var(--graphite);
+}
+
+@media (max-width: 767px) {
+  .hostSection {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 30px;
+  }
+  .hostPortrait {
+    width: 100%;
+    max-height: none;
+  }
+}
+
+.hostCopy {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.hostQuote {
+  font-style: italic;
+  font-size: var(--quote-size);
+  line-height: 1.35;
+}
+
+.hostBio {
+  color: var(--muted);
+}
+
+/* ---------- practical details ---------- */
+
+.details {
+  max-width: var(--editorial-width);
+  padding-top: var(--section-pad-tight);
+  padding-bottom: var(--section-pad-tight);
+  display: flex;
+  flex-direction: column;
+  gap: 44px;
+}
+
+.factGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 12px 30px;
+}
+
+.fact {
+  padding: 16px 0;
+  border-top: 1px solid var(--hairline);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.fact dt {
+  font-size: var(--detail-label-size);
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.smallPrint {
+  max-width: 52ch;
+  font-size: 0.85rem;
+  line-height: 1.7;
+  color: var(--muted);
+}
+
+/* ---------- final CTA ---------- */
+
+.finalCta {
+  max-width: none;
+  background: var(--indus);
+  color: var(--paper);
+  padding-top: var(--section-pad);
+  padding-bottom: var(--section-pad);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 24px;
+}
+
+.finalCtaHeadline {
+  font-size: var(--cta-display-size);
+  line-height: 1.02;
+  letter-spacing: -0.016em;
+  text-transform: uppercase;
+  max-width: 900px;
+}
+
+.finalCtaMeta {
+  color: rgb(242 235 221 / 0.8);
+}
+
+.btnSolid {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: var(--btn-pad);
+  background: var(--graphite);
+  color: var(--paper);
+  font-family: var(--font-sans), sans-serif;
+  font-size: var(--label-size);
+  font-weight: 500;
+  letter-spacing: var(--btn-ls);
+  text-transform: uppercase;
+  text-decoration: none;
+  transition: background-color 220ms ease;
+}
+
+.btnSolid .arrow {
+  display: inline-block;
+  transition: transform 220ms ease;
+}
+
+.btnSolid:hover {
+  background: #26282a;
+}
+
+.btnSolid:hover .arrow {
+  transform: translateX(6px);
+}
+
+.btnSolid:focus-visible,
+.ctaTextLink:focus-visible {
+  outline: 1px solid var(--paper);
+  outline-offset: 3px;
+}
+
+.ctaTextLink {
+  font-size: var(--label-size);
+  font-weight: 500;
+  letter-spacing: var(--btn-ls);
+  text-transform: uppercase;
+  text-decoration: none;
+  color: rgb(242 235 221 / 0.85);
+  padding: 0.4rem 0;
+}
+
+.ctaTextLink:hover {
+  color: var(--paper);
+}
+
+/* ---------- paper grain ---------- */
+
+.paperGrain {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  pointer-events: none;
+  opacity: 0.05;
+  mix-blend-mode: multiply;
+}
+
+/* ---------- tablet ---------- */
+
+@media (max-width: 1199px) and (min-width: 810px) {
+  .pillarRow {
+    gap: 40px;
+  }
+  .hostSection {
+    gap: 48px;
+  }
+}
+
+/* ---------- phone ---------- */
+
+@media (max-width: 809px) {
+  /* Stacked, not squeezed. The old rule kept brand and links on one row by
+     capping the brand at 150px — which forced "INDIA-KHAN × NATURA
+     ILLUSTRATA" to wrap across two cramped lines on every phone, every
+     pageview, with the nav links crowding its other side. Full width on its
+     own line is one line, not two — comfortably, the brand measures under
+     half of a 335px mobile content width even at this font size. */
+  .siteNav {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  .siteNavBrand {
+    font-size: 0.625rem;
+    letter-spacing: 0.06em;
+    line-height: 1.4;
+  }
+  .siteNavLinks {
+    gap: 20px;
+  }
+  .siteNavLinks a {
+    font-size: 0.625rem;
+    letter-spacing: 0.08em;
+  }
+  /* The nav gained a second row above (brand, then links), so anything
+     positioned or padded against --nav-pad-y needs to clear the extra row or
+     it sits under it -- which is exactly what happened here on the first
+     pass: `.sb`'s own padding-top (a `clamp(56px, 9vh, 104px)`, unrelated to
+     the nav var) resolves to 73px at 375x812, and the stacked nav measures
+     96px, so the sketchbook title landed 23px inside the nav. `60px` below is
+     that stacked content's own height at this breakpoint's fixed font sizes
+     (brand 27 + gap 8 + links 25 = 60), so this clears the real nav rather
+     than a guess, with 1rem of actual breathing room on top of that -- not
+     just barely not-touching. Shared by every absolutely-positioned title
+     that sits against the nav (`.heroCopy`, `.filmBookTitle`) and by `.sb`,
+     which is in normal flow and needs the same clearance as padding instead.
+  */
+  .heroCopy,
+  .filmBookTitle {
+    top: calc(var(--nav-pad-y) * 2 + 60px + 1rem);
+  }
+  /* .sb's own mobile override lives beside .sb itself, not here -- its base
+     rule is defined later in this file, and a same-specificity rule that
+     comes later in source order wins regardless of which media query
+     matches. Putting it here was the first version of this fix, and it
+     silently lost that fight. */
+  .tiltWrap {
+    perspective: 1200px;
+    /* No transform here — see the note on .tiltWrap above. */
+  }
+  .bookWrap {
+    width: 86vw;
+  }
+  .heroCopy {
+    gap: 12px;
+  }
+  .observed {
+    mask-size: 74vmin 60vmin;
+    -webkit-mask-size: 74vmin 60vmin;
+  }
+  .observedArtBox {
+    width: 74vmin;
+    height: 60vmin;
+  }
+  .swatchGroup {
+    top: 12vh;
+    right: 1.2rem;
+  }
+  .annotation {
+    top: 34vh;
+    right: 1.2rem;
+  }
+  .visionText {
+    bottom: 7vh;
+  }
+  .pillarRow {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 26px;
+  }
+  .pillarMedia {
+    width: 100%;
+  }
+  .dayLedger {
+    grid-template-columns: 1fr;
+  }
+  .hostSection {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .hostPortrait {
+    width: 100%;
+    height: 380px;
+  }
+  .folio {
+    height: 460vh;
+  }
+  .folioPlate {
+    max-height: 52vh;
+  }
+  .folioNote {
+    font-size: 0.68rem;
+  }
+}
+
+/* ---------- reduced motion ---------- */
+
+@media (prefers-reduced-motion: reduce) {
+  .hero,
+  .vision {
+    height: auto;
+  }
+  .heroSticky,
+  .visionSticky {
+    position: relative;
+    height: auto;
+    min-height: 100vh;
+  }
+  .heroCopy {
+    position: static;
+    padding-top: calc(var(--nav-pad-y) * 2 + 3rem);
+  }
+  .heroSticky {
+    row-gap: 3rem;
+    padding-bottom: 4rem;
+  }
+  .tiltWrap {
+    transform: none;
+  }
+}
+
+/* ---------- LES ÉTAPES DU VOYAGE — the interactive itinerary ----------
+   Everything here is derived from one continuous position (1→9); see
+   JourneyTimeline.tsx. Colours follow the supplied graphic: orange route and
+   rings, sand mountains, cream ground, warm/cool thermometers. */
+.jt {
+  padding: var(--section-pad-tight) 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3vh;
+  background: var(--paper);
+
+  --jt-orange: #c66a2a;
+  --jt-orange-pale: rgb(198 106 42 / 0.22);
+  --jt-sand: #cbb79c;
+  --jt-sand-deep: #b7a184;
+}
+
+.jtHead {
+  text-align: center;
+  padding: 0 var(--pad-x);
+}
+
+.jtTitle {
+  font-family: var(--font-sans), system-ui, sans-serif;
+  font-weight: 800;
+  letter-spacing: 0.01em;
+  text-transform: uppercase;
+  font-size: clamp(1.7rem, 4.2vw, 3.4rem);
+  line-height: 1;
+  color: var(--jt-orange);
+}
+
+.jtSub {
+  margin-top: 10px;
+  color: var(--muted);
+  font-size: clamp(0.95rem, 1.4vw, 1.15rem);
+}
+
+.jtStage {
+  width: 100%;
+  overflow: hidden;
+}
+
+.jtSvg {
+  width: 100%;
+  height: auto;
+  display: block;
+  touch-action: pan-y;
+  cursor: grab;
+}
+
+.jtSvg:active {
+  cursor: grabbing;
+}
+
+/* The range. Height is altitude, so these are never all the same size. */
+.jtPeak {
+  fill: var(--jt-sand);
+}
+
+.jtCap {
+  fill: #fdfaf4;
+}
+
+.jtAlt {
+  font-family: var(--font-sans), system-ui, sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  fill: var(--jt-orange);
+}
+
+/* The route is the elevation profile: it climbs and falls with the itinerary. */
+.jtRoutePale {
+  fill: none;
+  stroke: var(--jt-orange-pale);
+  stroke-width: 4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.jtRoute {
+  fill: none;
+  stroke: var(--jt-orange);
+  stroke-width: 4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.jtMark {
+  cursor: pointer;
+}
+
+.jtDot {
+  stroke: var(--jt-orange);
+  stroke-width: 2.4;
+}
+
+.jtDotNum {
+  font-family: var(--font-sans), system-ui, sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.jtDayLabel {
+  font-family: var(--font-sans), system-ui, sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  fill: var(--jt-orange);
+}
+
+.jtWalker {
+  fill: none;
+  stroke: var(--jt-orange);
+  stroke-width: 2.2;
+  stroke-linecap: round;
+}
+
+.jtWalker circle {
+  fill: var(--jt-orange);
+  stroke: none;
+}
+
+.jtPole {
+  stroke-width: 1.6;
+}
+
+.jtCar path,
+.jtCar circle {
+  fill: var(--jt-orange);
+}
+
+.jtCamp path {
+  fill: none;
+  stroke: var(--jt-orange);
+  stroke-width: 2.2;
+  stroke-linejoin: round;
+}
+
+/* The panel below: active day, its line, and the two thermometers. */
+/* Directly under the frieze, centred — the arrows drive the diagram, so
+   they sit with it rather than flanking the text panel below. */
+.jtArrowRow {
+  display: flex;
+  justify-content: center;
+  gap: 18px;
+  margin-top: -6px;
+}
+
+.jtPanel {
+  display: flex;
+  align-items: center;
+  gap: clamp(14px, 3vw, 40px);
+  max-width: var(--content-width);
+  padding: 0 var(--pad-x);
+  width: 100%;
+  justify-content: center;
+}
+
+.jtPanelBody {
+  text-align: center;
+  max-width: 52ch;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.jtPanelDay {
+  color: var(--jt-orange);
+}
+
+.jtPanelTitle {
+  font-size: clamp(1.15rem, 2vw, 1.7rem);
+  line-height: 1.2;
+}
+
+.jtSep {
+  color: var(--muted);
+  padding: 0 0.16em;
+}
+
+.jtPanelSummary {
+  color: var(--muted);
+  font-size: 0.92rem;
+  line-height: 1.5;
+}
+
+.jtTemps {
+  display: flex;
+  justify-content: center;
+  gap: 26px;
+  margin-top: 6px;
+}
+
+.jtThermo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.jtThermoSvg {
+  width: 15px;
+  height: 40px;
+  flex: none;
+}
+
+.jtTube {
+  fill: rgb(120 104 80 / 0.16);
+}
+
+.jtThermoVal {
+  font-family: var(--font-sans), system-ui, sans-serif;
+  font-size: 0.92rem;
+  color: var(--graphite);
+  font-variant-numeric: tabular-nums;
+}
+
+.jtThermoKind {
+  color: var(--muted);
+}
+
+.jtArrow {
+  flex: none;
+  width: clamp(44px, 4.4vw, 58px);
+  height: clamp(44px, 4.4vw, 58px);
+  border-radius: 50%;
+  border: 1.5px solid var(--jt-orange);
+  background: transparent;
+  color: var(--jt-orange);
+  font-size: 1.2rem;
+  line-height: 1;
+  cursor: pointer;
+  transition: background 0.3s ease, color 0.3s ease;
+}
+
+.jtArrow:hover,
+.jtArrow:focus-visible {
+  background: var(--jt-orange);
+  color: #fbf7ef;
+}
+
+.jtCaveat {
+  color: var(--muted);
+  max-width: 74ch;
+  padding: 0 var(--pad-x);
+  text-align: center;
+  font-style: italic;
+}
+
+/* Mobile keeps the active day centred and the range legible rather than
+   squeezing nine days into the width. */
+@media (max-width: 767px) {
+  .jtSvg {
+    width: 210%;
+    margin-left: -55%;
+  }
+  .jtPanel {
+    flex-wrap: wrap;
+  }
+  .jtPanelBody {
+    order: -1;
+    flex-basis: 100%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .jtSvg {
+    cursor: default;
+  }
+}
+
+/* The arrow points forward: this is a chronological frieze, not a graph. */
+.jtArrowHead {
+  fill: var(--jt-orange);
+}
+
+.jtSketcher {
+  fill: none;
+  stroke: var(--jt-orange);
+  stroke-width: 2.2;
+  stroke-linecap: round;
+}
+
+.jtSketcher circle {
+  fill: var(--jt-orange);
+  stroke: none;
+}
+
+.jtBoard {
+  fill: #fdfaf4;
+  stroke: var(--jt-orange);
+  stroke-width: 1.6;
+}
+
+/* The day's full account, not a caption. */
+.jtPanelLong {
+  color: var(--graphite);
+  font-size: 0.95rem;
+  line-height: 1.62;
+  text-wrap: pretty;
+}
+
+/* Where each meal is eaten, per day. */
+.jtMeals {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 12px 22px;
+  margin: 14px 0 0;
+  padding-top: 14px;
+  border-top: 1px solid var(--hairline);
+  text-align: left;
+}
+
+.jtMeal dt {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  color: var(--jt-orange);
+  margin-bottom: 3px;
+}
+
+.jtMealIcon {
+  width: 19px;
+  height: 19px;
+  flex: none;
+}
+
+.jtMeal dd {
+  margin: 0;
+  padding-left: 26px;
+  color: var(--muted);
+  font-size: 0.86rem;
+  line-height: 1.4;
+}
+
+/* =====================================================================
+   THE FIRST SKETCHBOOK — arrows turn the pages, scroll moves the page.
+
+   A normal-height section on purpose. The book it replaces was 1200vh of
+   sticky scroll-scrubbing, which is exactly the coupling the brief rules
+   out: here the wheel is untouched and scrolling past behaves like
+   scrolling past anything else.
+   ===================================================================== */
+
+.sb {
+  position: relative;
+  background: var(--paper);
+  padding: clamp(56px, 9vh, 104px) var(--pad-x) clamp(48px, 8vh, 92px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(18px, 3vh, 34px);
+}
+
+@media (max-width: 809px) {
+  /* The fixed nav stacks to two rows at this width (see the phone
+     breakpoint block) and measures 96px there, more than the 73px this
+     section's own `clamp(56px, 9vh, ...)` resolves to at common phone
+     heights -- without this the title sat 23px inside the nav, measured.
+     Same formula as .heroCopy/.filmBookTitle: 60px is the stacked nav's own
+     content height at this breakpoint's fixed font sizes, +1rem of real
+     breathing room on top of just clearing it. */
+  .sb {
+    padding-top: calc(var(--nav-pad-y) * 2 + 60px + 1rem);
+  }
+}
+
+.sbTitle {
+  max-width: var(--content-width);
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.sbTitle .typoDisplay {
+  font-size: clamp(1.9rem, 5.2vw, 4.4rem);
+}
+
+.sbProducers {
+  color: var(--muted);
+  letter-spacing: 0.18em;
+}
+
+/* Vertical cues. Editorial, not UI: no box, no button, letter-spaced small
+   caps the same as every other label on the site. */
+/* Turn or scroll. The current mode is stated, the other is the button —
+   a two-button segment would imply they are equals, and one of them is
+   simply where you already are. */
+.sbModes {
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+  margin-top: 12px;
+}
+
+.sbModeOn {
+  color: var(--graphite);
+}
+
+.sbModeOff {
+  background: none;
+  border: 0;
+  /* Padding expands the real, tappable box; the matching negative margin
+     cancels its effect on layout, so the row still measures and sits exactly
+     where the zero-padding version did. Without this the button's hit area
+     was its text glyphs — 116x13px, measured on a real phone viewport — the
+     only way to reach the scrolled film on a touch device, at under a third
+     of the 40px minimum a thumb needs. */
+  padding: 13px 8px;
+  margin: -13px -8px;
+  color: var(--muted);
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 5px;
+  text-decoration-thickness: 1px;
+  text-decoration-color: color-mix(in srgb, var(--muted) 45%, transparent);
+  transition: color 0.25s ease;
+}
+
+.sbModeOff:hover,
+.sbModeOff:focus-visible {
+  color: var(--graphite);
+}
+
+.sbModeHint {
+  margin-top: 8px;
+  font-size: 0.82rem;
+  color: var(--muted);
+}
+
+/* In film mode the way back sits with the pager and the skip, pinned in the
+   sticky viewport, so it is reachable from anywhere in the 1200vh rather than
+   only from the top. */
+.filmBookMode {
+  position: absolute;
+  right: clamp(16px, 3vw, 40px);
+  top: 5vh;
+  z-index: 5;
+  background: none;
+  border: 1px solid color-mix(in srgb, var(--muted) 34%, transparent);
+  border-radius: 999px;
+  padding: 9px 16px;
+  color: var(--muted);
+  cursor: pointer;
+  transition: color 0.25s ease, border-color 0.25s ease;
+}
+
+.filmBookMode:hover,
+.filmBookMode:focus-visible {
+  color: var(--graphite);
+  border-color: color-mix(in srgb, var(--graphite) 45%, transparent);
+}
+
+.sbCue {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--muted);
+  font-size: 0.72rem;
+}
+
+.sbCue .typoLabel {
+  font-size: 0.72rem;
+  letter-spacing: 0.16em;
+}
+
+.sbCue.isUp {
+  align-self: flex-start;
+}
+
+.sbCue.isDown {
+  align-self: flex-end;
+}
+
+/* ------------------------------------------------------------ the scene */
+
+.sbScene {
+  position: relative;
+  width: min(94vw, 108vh);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* The camera is locked. Nothing in this section moves the book, zooms it
+     or parallaxes it — the paper supplies all the movement, which is what
+     keeps the turn from reading as a slideshow crossfade. */
+  perspective: 2200px;
+  perspective-origin: 50% 46%;
+}
+
+.sbBook {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1500 / 900;
+  transform-style: preserve-3d;
+  outline: none;
+}
+
+.sbBook:focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--graphite) 55%, transparent);
+  outline-offset: 14px;
+}
+
+/* The page block: what gives the book mass under the two visible halves. */
+.sbBoard {
+  position: absolute;
+  inset: -1.2% -1%;
+  border-radius: 9px;
+  background: linear-gradient(180deg, #efe6d4 0%, #e6dbc6 62%, #d9cdb4 100%);
+  box-shadow:
+    0 0 0 0.5px rgb(122 106 84 / 0.3),
+    0 26px 60px -28px rgb(40 34 26 / 0.55);
+  transform: translateZ(-8px);
+}
+
+/* Paper, not a white rectangle: warm ground, a fibre wash, and a little
+   irregularity so a blank page still looks like a page. */
+.sbHalf,
+.sbFace.isBack,
+.sbBlank {
+  background-color: #f4eee1;
+  background-image:
+    radial-gradient(120% 90% at 30% 8%, rgb(255 253 246 / 0.55), transparent 62%),
+    radial-gradient(80% 60% at 78% 88%, rgb(214 199 172 / 0.22), transparent 70%);
+}
+
+.sbHalf {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 50%;
+  overflow: hidden;
+  backface-visibility: hidden;
+}
+
+.sbHalf.isLeft {
+  left: 0;
+  border-radius: 6px 2px 2px 6px;
+  box-shadow: inset -16px 0 26px -20px rgb(96 82 60 / 0.55);
+}
+
+.sbHalf.isRight {
+  right: 0;
+  border-radius: 2px 6px 6px 2px;
+  box-shadow: inset 16px 0 26px -20px rgb(96 82 60 / 0.55);
+}
+
+/* The drawing, plainly. One plate scaled to two half-widths, so left and right
+   show its two halves and it crosses the gutter exactly as it does on paper.
+   Deliberately no transition: the client asked for the drawing to arrive
+   without animation, and a page that fades in is a page still being made. */
+.sbPlate {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 50%;
+  background-size: 200% 100%;
+  background-repeat: no-repeat;
+  z-index: 1;
+}
+
+.sbPlate.isLeft {
+  left: 0;
+  background-position: 0% 50%;
+  border-radius: 6px 2px 2px 6px;
+}
+
+.sbPlate.isRight {
+  right: 0;
+  background-position: 100% 50%;
+  border-radius: 2px 6px 6px 2px;
+}
+
+/* ---- the three pages you can look around in ----
+
+   A real scroll container, not a captured wheel. The pane scrolls; its
+   scrollTop drives the clip's currentTime; and when it runs out the browser
+   chains to the document so the landing page carries on by itself. That is
+   also why touch and keyboard need no gesture code at all. */
+.sbPane {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  border-radius: 6px;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+  /* Touch, on a real phone: without these two, a swipe over the book was
+     read as a swipe on the document — `data-lenis-prevent` only tells Lenis
+     to stand aside, it does not stop the browser's own scroll chaining, so
+     the moment the pane was at an edge (and it starts at the top edge) an
+     upward swipe scrolled the landing page instead of the scene. `contain`
+     cuts the chain both ways while the finger is inside the book; `pan-y`
+     declares the gesture so the browser gives it to the pane at all. */
+  overscroll-behavior: contain;
+  touch-action: pan-y;
+}
+
+.sbPane::-webkit-scrollbar {
+  display: none;
+}
+
+.sbPaneSticky {
+  position: sticky;
+  top: 0;
+  height: 100%;
+}
+
+.sbPaneVideo {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* How far you can look. Two extra page-heights of travel is enough to reach
+   the end of the clip without the pane feeling bottomless. */
+.sbPaneSpacer {
+  height: 220%;
+}
+
+/* Shown, not described: a double-headed arrow, because the point is that you
+   can look both ways. It goes quiet once you have reached the bottom. */
+.sbScrollHint {
+  position: absolute;
+  right: 3.5%;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 4;
+  pointer-events: none;
+  transition: opacity 0.6s ease;
+}
+
+.sbScrollHint.isDone {
+  opacity: 0;
+}
+
+.sbScrollGlyph {
+  display: block;
+  width: 14px;
+  height: 44px;
+  fill: none;
+  stroke: rgb(255 253 248 / 0.9);
+  stroke-width: 1.4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  filter: drop-shadow(0 1px 3px rgb(30 24 16 / 0.55));
+  animation: sbLook 2.8s ease-in-out infinite;
+}
+
+@keyframes sbLook {
+  0%, 100% { transform: translateY(-3px); }
+  50% { transform: translateY(3px); }
+}
+
+.sbSceneCue {
+  max-width: 34ch;
+  margin: 0 auto;
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+.sbBlank {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 50%;
+  z-index: 2;
+}
+
+.sbBlank.isRight {
+  right: 0;
+}
+
+.sbBlank.isLeft {
+  left: 0;
+}
+
+/* The permanent gutter shadow — always there, because a book always has one. */
+.sbGutter {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: 7%;
+  transform: translateX(-50%);
+  z-index: 6;
+  pointer-events: none;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgb(104 88 64 / 0.16) 34%,
+    rgb(88 74 54 / 0.26) 50%,
+    rgb(104 88 64 / 0.16) 66%,
+    transparent
+  );
+}
+
+/* ------------------------------------------------------------- the leaf */
+
+.sbLeaf {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 50%;
+  z-index: 5;
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+
+/* Hinged at the spine, which is the inner edge of whichever half is turning. */
+.sbLeaf.isFwd {
+  right: 0;
+  transform-origin: left center;
+}
+
+.sbLeaf.isBack {
+  left: 0;
+  transform-origin: right center;
+}
+
+/* Nested panels, each hinged on the edge of the one before it. This is what
+   bends the sheet: rotating a single plane gives a rectangle pivoting, and
+   the eye reads that as a card, not paper. */
+.sbSeg {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 33.3333%;
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+
+.sbLeaf.isFwd > .sbSeg {
+  left: 0;
+}
+
+.sbLeaf.isBack > .sbSeg {
+  right: 0;
+}
+
+.sbSeg .sbSeg {
+  width: 100%;
+}
+
+.sbLeaf.isFwd .sbSeg .sbSeg {
+  transform-origin: left center;
+}
+
+.sbLeaf.isBack .sbSeg .sbSeg {
+  transform-origin: right center;
+}
+
+.sbFace {
+  position: absolute;
+  inset: 0;
+  backface-visibility: hidden;
+  background-size: 600% 100%;
+  background-repeat: no-repeat;
+}
+
+.sbFace.isBack {
+  transform: rotateY(180deg);
+}
+
+/* Light on paper. A sheet held edge-on to the room catches almost none of
+   it, so this rides the turn rather than sitting still. */
+.sbFaceShade {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, rgb(58 48 34 / 0.5), rgb(58 48 34 / 0.05));
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* The shadow the leaf throws on the page under it — broad as it lifts,
+   narrow and dark through the vertical, gone once it is down. */
+.sbCast {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 50%;
+  z-index: 4;
+  opacity: 0;
+  pointer-events: none;
+  will-change: transform, opacity;
+}
+
+.sbCast.isFwd {
+  right: 0;
+  transform-origin: left center;
+  background: linear-gradient(90deg, rgb(52 44 32 / 0.5), transparent 72%);
+}
+
+.sbCast.isBack {
+  left: 0;
+  transform-origin: right center;
+  background: linear-gradient(270deg, rgb(52 44 32 / 0.5), transparent 72%);
+}
+
+/* The alt text lives on a real image so screen readers and search engines
+   get the drawing, which CSS backgrounds would hide from both. */
+.sbA11y {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.sbLive {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+}
+
+/* ----------------------------------------------------------- the arrows */
+
+.sbArrow {
+  position: absolute;
+  top: 50%;
+  z-index: 7;
+  width: 44px;
+  height: 44px;
+  margin-top: -22px;
+  display: grid;
+  place-items: center;
+  /* Black, at the client's instruction. They are the only control the book
+     has, and a whisper-thin grey arrow was not reading as one. */
+  border: 1px solid color-mix(in srgb, var(--graphite) 55%, transparent);
+  border-radius: 50%;
+  background: none;
+  color: var(--graphite);
+  font-size: 1.05rem;
+  opacity: 0.9;
+  cursor: pointer;
+  transition:
+    opacity 0.3s ease,
+    transform 0.3s ease,
+    border-color 0.3s ease,
+    background-color 0.3s ease;
+}
+
+/* Just outside the book, not at the edges of the browser. */
+.sbArrow.isPrev {
+  right: calc(100% + clamp(8px, 1.6vw, 26px));
+}
+
+.sbArrow.isNext {
+  left: calc(100% + clamp(8px, 1.6vw, 26px));
+}
+
+.sbArrow:hover:not(:disabled),
+.sbArrow:focus-visible:not(:disabled) {
+  opacity: 1;
+  border-color: var(--graphite);
+  background-color: var(--graphite);
+  color: var(--paper);
+}
+
+.sbArrow.isPrev:hover:not(:disabled) {
+  transform: translateX(-4px);
+}
+
+.sbArrow.isNext:hover:not(:disabled) {
+  transform: translateX(4px);
+}
+
+.sbArrow:disabled {
+  opacity: 0.2;
+  cursor: default;
+}
+
+/* Discovery: once, a few pixels, then never again. No loop, no pulse. */
+.sbArrow.isNudge {
+  animation: sbNudge 1.5s ease-in-out 0.7s 1;
+}
+
+@keyframes sbNudge {
+  0%, 100% { transform: translateX(0); }
+  45% { transform: translateX(6px); }
+}
+
+.sbCaption {
+  max-width: 46ch;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.sbCaptionLine {
+  font-size: clamp(1.15rem, 2.2vw, 1.6rem);
+}
+
+.sbCaptionNote {
+  color: var(--muted);
+}
+
+.sbCount {
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Mobile: the arrows come inside, because outside the book there is no room.
+   They keep a 44px hit area and never sit over the drawing's middle. */
+@media (max-width: 860px) {
+  .sbScene {
+    width: 100%;
+    /* Room for the arrow row the arrows move down into. */
+    padding-bottom: 68px;
+  }
+
+  /* Below the book, not over it — the client's call after testing on a
+     phone. At this width the arrows sat ON the pages (inset -6px), which
+     put a thumb over the drawing to turn it and half-covered the picture.
+     A row under the book keeps both hands off the artwork. */
+  .sbArrow,
+  .sbArrow.isPrev,
+  .sbArrow.isNext {
+    top: auto;
+    bottom: 0;
+    margin-top: 0;
+  }
+
+  .sbArrow.isPrev {
+    right: auto;
+    left: calc(50% - 64px);
+  }
+
+  .sbArrow.isNext {
+    left: auto;
+    right: calc(50% - 64px);
+  }
+
+  .sbCue .typoLabel {
+    font-size: 0.62rem;
+    letter-spacing: 0.1em;
+  }
+}
+
+/* No curl, no 3D, no long hold — but the order survives, because the blank
+   page is the story, not the decoration. */
+@media (prefers-reduced-motion: reduce) {
+  .sbScene {
+    perspective: none;
+  }
+
+  .sbLeaf,
+  .sbSeg,
+  .sbCast {
+    transition: none !important;
+  }
+
+  .sbArrow.isNudge {
+    animation: none;
+  }
+}

@@ -1,0 +1,109 @@
+/* Design tokens — extracted from the Framer foundation (see docs/FRAMER-DESIGN-AUDIT.md).
+   Framer is the composition authority: values here are measured from the canvas,
+   not invented. Pigment colors stay paint-like, not branding swatches. */
+
+:root {
+  /* -------- color -------- */
+  --paper: #f2ebdd;
+  --paper-shadow: #e7decf;
+  --paper-plate: #f7f1e6; /* folio "fresh page", slightly lighter than paper */
+  --graphite: #343536;
+  --ink: #343536;
+  --muted: #6e6a62;
+  --indus: #7c8981;
+  --pangong: #55748a;
+  --mineral: #31566c;
+  --turquoise: #638e97;
+  --ochre: #a87848;
+  --apricot: #c98961;
+  --clay: #8c654d;
+  --monastery: #854b40;
+  --herbal: #90a873;
+  --pale-sky: #c9dce4;
+  --linen: #3e3a34;
+
+  --hairline: rgb(52 53 54 / 0.18);
+  --media-tint-indus: rgb(124 137 129 / 0.09);
+  --media-tint-mineral: rgb(85 116 138 / 0.08);
+  --media-tint-ochre: rgb(168 120 72 / 0.1);
+
+  /* -------- material -------- */
+  /* Bookcloth weave: two fine crosshatch passes, blended over --linen.
+     Placeholder for a real bookcloth scan (see ASSET-MANIFEST). */
+  --cloth-weave:
+    repeating-linear-gradient(
+      90deg,
+      rgb(255 255 255 / 0.05) 0 1px,
+      transparent 1px 3px
+    ),
+    repeating-linear-gradient(
+      0deg,
+      rgb(0 0 0 / 0.07) 0 1px,
+      transparent 1px 3px
+    );
+
+  /* Film grading: pulls the proxy's digital cyan back and gives the rock
+     mineral warmth (ochre/sand/grey-violet) so footage marries the paper.
+     River blues survive because the shift is small and warmth-weighted. */
+  --film-grade: saturate(0.87) contrast(1.05) sepia(0.13) hue-rotate(-9deg)
+    brightness(1.02);
+
+  /* -------- layout -------- */
+  --content-width: 1200px;   /* hero, pillars, camp, folio, cta */
+  --editorial-width: 1100px; /* intro, nine days, host, practical */
+  --statement-width: 820px;
+  --text-width: 650px;
+  --support-width: 600px;
+  --heading-width: 760px;
+
+  --pad-x: 40px;
+  --pad-x-mobile: 20px;
+
+  /* section vertical rhythm (Framer measured) */
+  --section-pad: 150px;
+  --section-pad-tight: 130px;
+  --section-pad-roomy: 160px;
+  --section-pad-camp: 140px;
+
+  /* -------- type -------- */
+  /* families come from next/font variables: --font-serif (Bodoni Moda),
+     --font-sans (Inter), --font-hand (annotation placeholder) */
+  --display-size: clamp(2.6rem, 6.4vw, 4.75rem);   /* 76px desktop */
+  --display-lh: 0.98;
+  --display-ls: -0.026em;
+  --chapter-size: clamp(1.9rem, 3.4vw, 3rem);      /* 48px desktop */
+  --chapter-lh: 1;
+  --chapter-ls: -0.02em;
+  --cta-display-size: clamp(2.2rem, 4.4vw, 3.875rem); /* 62px */
+  --body-size: 1.0625rem;                           /* 17px */
+  --body-lh: 1.55;
+  --body-ls: -0.02em;
+  --label-size: 0.6875rem;                          /* 11px */
+  --label-ls: 0.118em;                              /* +1.3px */
+  --nav-size: 0.75rem;                              /* 12px */
+  --quote-size: clamp(1.25rem, 2vw, 1.6875rem);     /* 27px */
+  --ledger-size: 1.25rem;                           /* 20px */
+  --detail-label-size: 0.8125rem;                   /* 13px */
+
+  /* -------- components -------- */
+  --btn-pad: 14px 20px;
+  --btn-ls: 0.11em; /* +1.2px */
+  --nav-pad-y: 22px;
+  --chapter-gap: 64px;
+  --chapter-stack-gap: 120px;
+  --chapter-media-h: 360px;
+  --media-h: 520px;
+}
+
+@media (max-width: 809px) {
+  :root {
+    --pad-x: var(--pad-x-mobile);
+    --section-pad: 96px;
+    --section-pad-tight: 84px;
+    --section-pad-roomy: 110px;
+    --section-pad-camp: 90px;
+    --chapter-media-h: 340px;
+    --media-h: 380px;
+    --nav-pad-y: 18px;
+  }
+}
