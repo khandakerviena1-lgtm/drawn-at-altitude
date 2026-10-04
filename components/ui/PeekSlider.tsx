@@ -93,7 +93,13 @@ export default function PeekSlider({
                 aria-hidden={i === index ? undefined : true}
               >
                 {seen.has(i) ? (
-                  <img src={s.src} alt={s.alt} decoding="async" />
+                  // `lazy` on top of the window, not instead of it: the window
+                  // keeps the next slide loaded before its click, and `lazy`
+                  // keeps a slider that is still screens below the reader
+                  // from loading at all — with six sliders on the page, that
+                  // is most of the first-paint weight. A peeking neighbour
+                  // is in the viewport, so `lazy` never delays it.
+                  <img src={s.src} alt={s.alt} decoding="async" loading="lazy" />
                 ) : (
                   <span className="roomsSlideHold" aria-hidden />
                 )}

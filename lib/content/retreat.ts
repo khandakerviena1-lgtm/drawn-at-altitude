@@ -314,46 +314,289 @@ export const filmHandover = {
   label: "Leh → Leh · September 2027 · 8 guests · The Indus River Camp",
 };
 
-// The rooms slider — the client's own photography of the camp. Masters kept
-// in /source/photos/camp/. Slides are 3:2 at 1500×1000 in /public/img/rooms/;
-// add or reorder freely, the component reads the length.
+// The rooms slider — the camp's own photography, from the Drive folder
+// "Indus River Camp - Ladakh Pictures" (full-resolution masters; the earlier
+// slides came from 1920px phone copies). Slides are 3:2 at 1800×1200 in
+// /public/img/photos/rooms/, built by scripts/build-photos.py, which records
+// the master and crop behind each one. Add or reorder freely; the component
+// reads the length.
 //
-// 3:2 rather than the portrait frame of the reference: four of the five
-// photographs are landscape, and the two that carry the place — the veranda
-// over the river and the cottage under the snow range — are panoramas that a
-// portrait crop would throw away.
+// 3:2 rather than the portrait frame of the original reference: most of the
+// photography is landscape, and the frames that carry the place — the
+// veranda over the river, the window onto the Indus — are wide.
 export const rooms = [
   {
-    src: "/img/rooms/room-01.webp",
+    src: "/img/photos/rooms/cottage.webp",
     title: "The cottage",
-    alt: "A timber-framed cottage at the Indus River Camp, its veranda on poplar posts, with the snow range and a poplar grove behind it",
+    alt: "A cottage veranda on timber posts under a thatched roof, wicker chairs behind glass, a poplar grove and the snow range beyond",
   },
   {
-    src: "/img/rooms/room-02.webp",
-    title: "The veranda",
-    alt: "The veranda of a cottage looking out over the Indus to the snow peaks, with wicker chairs under a thatched roof",
+    src: "/img/photos/rooms/chalet.webp",
+    title: "The chalet",
+    alt: "A timber chalet with a thatched veranda and glazed front, two wicker chairs on the porch and pale reeds around it",
   },
   {
-    src: "/img/rooms/room-03.webp",
-    title: "The long view",
-    alt: "Chairs and a table on the terrace behind glass, the reeds and the snow range beyond",
+    src: "/img/photos/rooms/chalet-room.webp",
+    title: "A chalet room",
+    alt: "A bright chalet room with a timber-beamed ceiling, a bed under a block-printed quilt, blue rugs on a wooden floor and a wall of windows",
   },
   {
-    src: "/img/rooms/room-04.webp",
-    title: "The room",
-    alt: "A bedroom in late afternoon light: a timber-beamed ceiling, a block-printed quilt, a bench at the foot of the bed and rugs on a wooden floor",
+    src: "/img/photos/rooms/suite.webp",
+    title: "The suite",
+    alt: "A suite in late afternoon light: a beamed ceiling, a bed with a printed quilt, a bench at its foot and rugs on a wooden floor",
   },
   {
-    src: "/img/rooms/room-06.webp",
+    src: "/img/photos/rooms/bed.webp",
     title: "The bed",
     alt: "A bed seen through a doorway in warm lamplight, made up with white linen and a block-printed quilt",
   },
   {
-    src: "/img/rooms/room-05.webp",
+    src: "/img/photos/rooms/window.webp",
+    title: "The window",
+    alt: "From inside a room, a wall of timber-framed windows opening onto the Indus and the mountains beyond",
+  },
+  {
+    src: "/img/photos/rooms/veranda.webp",
+    title: "The veranda",
+    alt: "Two wicker chairs with blue cushions on a cottage veranda, the mountains reflected in the window glass behind them",
+  },
+  {
+    src: "/img/photos/rooms/bathroom.webp",
     title: "The bathroom",
-    alt: "A bathroom with deep teal walls, two basins on a timber counter, carved mirrors and a rain shower through the doorway",
+    alt: "A bathroom with a blue wall, a basin on a timber counter and a slatted wooden floor, low sun through a high window",
   },
 ] as const;
+
+// Four more chapters from the same photography, each a PeekSlider, placed
+// where a guest would meet them: the country the itinerary crosses (after the
+// journey), the camp around the rooms and its table (after the rooms), and
+// the neighbours (after the dye workshop — they are drawing subjects).
+//
+// HONESTY OF CAPTIONS: Tso Kar is not on the itinerary, and black-necked
+// cranes are birds of the high lakes, not of the camp. Neither is captioned
+// as something the week visits or something seen from the room, and the
+// support lines say so in plain words.
+export type Gallery = {
+  readonly id: string;
+  readonly kicker: string;
+  readonly heading: string;
+  readonly support: string;
+  readonly label: string;
+  readonly slides: readonly { readonly src: string; readonly title: string; readonly alt: string }[];
+};
+
+export const ladakh: Gallery = {
+  id: "ladakh",
+  kicker: "Ladakh",
+  heading: "The country around the week.",
+  support:
+    "Hemis and Gotsang are day four, Basgo is on the road down to Alchi, Shey is across the river from camp. Tso Kar is simply Ladakh.",
+  label: "place",
+  slides: [
+    {
+      src: "/img/photos/ladakh/hemis.webp",
+      title: "Hemis",
+      alt: "Hemis monastery, white walls and tiered roofs at the foot of a steep striated mountainside under a blue sky",
+    },
+    {
+      src: "/img/photos/ladakh/gotsang.webp",
+      title: "Gotsang",
+      alt: "The Gotsang hermitage, a small white building with red window frames clinging to a bare rock face above Hemis",
+    },
+    {
+      src: "/img/photos/ladakh/basgo.webp",
+      title: "Basgo",
+      alt: "The ruined fort and temples of Basgo on eroded ochre ridges, a green valley and mountains behind",
+    },
+    {
+      src: "/img/photos/ladakh/shey.webp",
+      title: "Shey, in the haze",
+      alt: "Shey palace on its ridge, a silhouette against layer after layer of pale blue mountains",
+    },
+    {
+      src: "/img/photos/ladakh/khardung-la.webp",
+      title: "Snow towards Khardung La",
+      alt: "Snow and cloud on the range towards Khardung La, brown ridges and a line of green poplars below",
+    },
+    {
+      src: "/img/photos/ladakh/tso-kar-horses.webp",
+      title: "Tso Kar",
+      alt: "Horses grazing on the shore of Tso Kar, a rust and violet mountain rising behind the lake",
+    },
+    {
+      src: "/img/photos/ladakh/tso-kar-herd.webp",
+      title: "A herd at Tso Kar",
+      alt: "A herd of goats grazing on the flats by Tso Kar, the salt lake and snow-dusted mountains behind",
+    },
+  ],
+};
+
+export const campLife: Gallery = {
+  id: "camp",
+  kicker: "Life at the camp",
+  heading: "Days by the river.",
+  support:
+    "Between sessions there is the bank, the paths through the reeds, and a long view in every direction.",
+  label: "photograph",
+  slides: [
+    {
+      src: "/img/photos/camp/from-above.webp",
+      title: "The camp from above",
+      alt: "An aerial view of the camp among willows and reeds, the braided Indus spreading across the valley towards the mountains",
+    },
+    {
+      src: "/img/photos/camp/paths.webp",
+      title: "The paths",
+      alt: "A narrow path between tall golden reeds, bare willows and low sun overhead",
+    },
+    {
+      src: "/img/photos/camp/reading-river.webp",
+      title: "Reading by the river",
+      alt: "A woman reading, silhouetted against a wide window onto the river, reeds and mountains",
+    },
+    {
+      src: "/img/photos/camp/window-seat.webp",
+      title: "A window seat",
+      alt: "A woman with a cup on a deep window seat under a thatched roof, the river and clouds outside",
+    },
+    {
+      src: "/img/photos/camp/two-chairs.webp",
+      title: "Two chairs on the bank",
+      alt: "Two people in wicker chairs on the riverbank, facing a snow-covered range",
+    },
+    {
+      src: "/img/photos/camp/riverside-picnic.webp",
+      title: "Tea on the bank",
+      alt: "Two men at a low table on a riverside deck, a white curtain lifting in the wind, the river and mountains behind",
+    },
+    {
+      src: "/img/photos/camp/still-water.webp",
+      title: "Still water",
+      alt: "Mountains and clouds reflected in a perfectly still arm of the river",
+    },
+    {
+      src: "/img/photos/camp/towards-shey.webp",
+      title: "Towards Shey",
+      alt: "A woman standing at the water's edge, looking across the river towards Shey and the snow peaks",
+    },
+    {
+      src: "/img/photos/camp/library.webp",
+      title: "The library",
+      alt: "The library and sitting room: low sofas, a red rug, a carved wall and a long run of windows",
+    },
+    {
+      src: "/img/photos/camp/milky-way.webp",
+      title: "After dark",
+      alt: "The Milky Way over the camp at night, a single lit chalet among the trees below",
+    },
+    {
+      src: "/img/photos/camp/moon.webp",
+      title: "Through the camp telescope",
+      alt: "The moon photographed through the camp's telescope, its craters sharp along the shadow line",
+    },
+  ],
+};
+
+export const table: Gallery = {
+  id: "table",
+  kicker: "The table",
+  heading: "Grown nearby, eaten outside.",
+  support: "Most meals are taken at the camp, from its garden and the valley around it.",
+  label: "dish",
+  slides: [
+    {
+      src: "/img/photos/table/lunch-by-the-water.webp",
+      title: "Lunch by the water",
+      alt: "A table laid by the river with bowls of salads and dishes and a jar of cosmos flowers, mountains across the water",
+    },
+    {
+      src: "/img/photos/table/supper-by-the-river.webp",
+      title: "Supper by the river",
+      alt: "A wooden table set at dusk with grey plates, pink napkins and small bowls, the river dark behind",
+    },
+    {
+      src: "/img/photos/table/breakfast.webp",
+      title: "Breakfast",
+      alt: "A blue bowl of watermelon, dragon fruit, pomegranate and grapes on a wooden table in morning sun",
+    },
+    {
+      src: "/img/photos/table/watermelon-salad.webp",
+      title: "Watermelon, mint and feta",
+      alt: "A dark bowl of watermelon, mint and feta on a blue placemat with a pink napkin",
+    },
+    {
+      src: "/img/photos/table/garden-spinach.webp",
+      title: "From the garden",
+      alt: "Hands in red and white bangles slicing a heap of fresh spinach on a white board",
+    },
+    {
+      src: "/img/photos/table/sea-buckthorn.webp",
+      title: "Sea buckthorn, September",
+      alt: "Branches heavy with orange sea buckthorn berries at the September harvest",
+    },
+    {
+      src: "/img/photos/table/wood-oven.webp",
+      title: "The wood oven",
+      alt: "A pizza baking inside a wood-fired oven, flames and embers along its walls",
+    },
+    {
+      src: "/img/photos/table/brownie.webp",
+      title: "Something sweet",
+      alt: "A chocolate brownie with a scoop of ice cream, chocolate sauce and a mint leaf in a speckled ceramic bowl",
+    },
+  ],
+};
+
+export const wildlife: Gallery = {
+  id: "wildlife",
+  kicker: "Drawn from life",
+  heading: "The neighbours.",
+  support:
+    "The fox, the heron and the ibisbill were all photographed at the camp. Blue sheep keep to the slopes on the walk to Gotsang; the cranes to the high lakes.",
+  label: "photograph",
+  slides: [
+    {
+      src: "/img/photos/wildlife/red-fox.webp",
+      title: "Red fox",
+      alt: "A Himalayan red fox standing on the stony ground of the camp, looking straight at the camera",
+    },
+    {
+      src: "/img/photos/wildlife/grey-heron.webp",
+      title: "Grey heron",
+      alt: "A grey heron in flight against a blue sky, wings spread",
+    },
+    {
+      src: "/img/photos/wildlife/ibisbill.webp",
+      title: "Ibisbill",
+      alt: "An ibisbill in flight, its long down-curved bill clear against the sky",
+    },
+    {
+      src: "/img/photos/wildlife/citrine-wagtail.webp",
+      title: "Citrine wagtail",
+      alt: "A citrine wagtail, bright yellow head and grey back, perched in a sea buckthorn bush",
+    },
+    {
+      src: "/img/photos/wildlife/white-wagtail.webp",
+      title: "White wagtail",
+      alt: "A white wagtail perched on a sea buckthorn branch with an insect in its beak",
+    },
+    {
+      src: "/img/photos/wildlife/rosefinch.webp",
+      title: "Common rosefinch",
+      alt: "A crimson male common rosefinch perched on a silvery shrub against soft green",
+    },
+    {
+      src: "/img/photos/wildlife/blue-sheep.webp",
+      title: "Blue sheep",
+      alt: "A blue sheep with curved horns standing among the rocks of a scree slope",
+    },
+    {
+      src: "/img/photos/wildlife/black-necked-cranes.webp",
+      title: "Black-necked cranes",
+      alt: "Two black-necked cranes standing together on green marsh grass",
+    },
+  ],
+};
 
 // The dye workshop. The spreads follow the process, so the slider IS the
 // process rather than a gallery: gathering the dyestuffs (henna off the tree,

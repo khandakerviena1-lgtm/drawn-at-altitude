@@ -1043,6 +1043,12 @@ html.isGated body {
   margin-top: 0.6rem;
 }
 
+/* The photography chapters reuse the rooms slider; the warm ground is the
+   dye workshop's, so neighbouring galleries alternate rather than merge. */
+.photoGallery.isWarm {
+  background: #f0e9db;
+}
+
 @media (max-width: 767px) {
   .rooms {
     --slide-w: 84vw;

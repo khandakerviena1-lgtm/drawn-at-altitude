@@ -9,6 +9,8 @@ import HostSection from "@/components/sections/HostSection";
 import RetreatDetails from "@/components/sections/RetreatDetails";
 import BookingDetails from "@/components/sections/BookingDetails";
 import FinalCTA from "@/components/sections/FinalCTA";
+import PhotoGallery from "@/components/sections/PhotoGallery";
+import { campLife, ladakh, table, wildlife } from "@/lib/content/retreat";
 
 export default function Home() {
   return (
@@ -24,6 +26,9 @@ export default function Home() {
           was arriving seven sections deep. Its nav anchor (#journey) rides
           with it. */}
       <JourneyTimeline />
+      {/* The places the itinerary names, photographed — straight after the
+          days that name them. */}
+      <PhotoGallery gallery={ladakh} />
       <Intro />
       <ArtistVision />
       {/* Anastasiia takes the place the four pillars held: the reason to come
@@ -36,6 +41,10 @@ export default function Home() {
           book; it is kept unwired in WindowMorph.tsx, as is the original
           CampSection. */}
       <RoomSlider />
+      {/* The rest of the camp, then its table: what a day there is like
+          between sessions. Same slider as the rooms, alternating ground. */}
+      <PhotoGallery gallery={campLife} tone="warm" />
+      <PhotoGallery gallery={table} />
       {/* Sits with the camp on purpose: you have just watched the room become
           real through a drawing, so the method that makes such a drawing
           belongs here rather than eight screens later. */}
@@ -43,6 +52,9 @@ export default function Home() {
       {/* The TEXTURE pillar, finally with material behind it: natural dyeing
           from raw silk to the finished range, in Anastasiia's spreads. */}
       <DyeWorkshop />
+      {/* The neighbours — birds and animals seen at and around the camp,
+          next to the drawing chapters because they are what gets drawn. */}
+      <PhotoGallery gallery={wildlife} />
       {/* SketchReveal folded into DrawingProcess above — the page building
           itself is now driven by the method's own stages. FolioSection was
           development scaffolding (a generated plate, labelled as such); both
