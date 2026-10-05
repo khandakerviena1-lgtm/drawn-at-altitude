@@ -13,11 +13,14 @@ export default function FinalCTA() {
         <a className="btnSolid" href={cta.mailto}>
           {cta.primary} <span className="arrow">→</span>
         </a>
-        <a className="btnSolid btnOutline" href={cta.webinar.href}>
+        <a className="btnSolid btnOutline" href={cta.webinar.href} target="_blank" rel="noopener noreferrer">
           {cta.webinar.label} <span className="arrow">→</span>
         </a>
       </div>
-      <p className="ctaWebinarNote">{cta.webinar.note}</p>
+      <p className="ctaWebinarNote">
+        <span className="ctaWebinarDate">{cta.webinar.date}</span>
+        {cta.webinar.note}
+      </p>
       <a className="ctaTextLink" href="#journey">
         {cta.secondary}
       </a>

@@ -1127,22 +1127,19 @@ export const cta = {
   meta: "September 2027 · 9 days · 8 guests",
   primary: "Request a place",
   secondary: "View the full journey",
+  // Requests for a place go to Anastasiia (client, 2026-10-05).
   mailto:
-    "mailto:contact@india-khan.fr?subject=Drawn%20at%20Altitude%20%E2%80%94%20Request%20a%20place",
-  // The group webinar (client, 2026-10-05): an online session to talk the
-  // trip through before committing. No date yet and no registration page, so
-  // for now signing up is a prefilled email; swap `href` for a Zoom/Luma/
-  // Calendly link and add the date to `note` once it is set.
+    "mailto:info@anastasiiamorozova.com?subject=Drawn%20at%20Altitude%20%E2%80%94%20Request%20a%20place",
+  // The group webinar (client, 2026-10-05): "Travel Sketching — Webinar",
+  // Saturday 24 October 2026, 18:00–19:00. The client's Google Meet link is
+  // the sign-up: the button goes straight to it. Time shown as Paris time —
+  // the invitation gave no zone. ⚠️ Once the date has passed, update or
+  // remove this block, or the page will advertise a webinar that is over.
   webinar: {
     label: "Join the group webinar",
-    note: "An online session to talk through the trip and the project. The date is sent to everyone who signs up.",
-    href:
-      "mailto:contact@india-khan.fr?subject=" +
-      encodeURIComponent("Webinar — Drawn at Altitude") +
-      "&body=" +
-      encodeURIComponent(
-        "Hello,\n\nI would like to join the next group webinar about Drawn at Altitude.\n\nName:\nCountry / time zone:\n\nThank you",
-      ),
+    date: "Travel Sketching · Saturday 24 October, 18:00–19:00 (Paris time)",
+    note: "An online session on Google Meet to talk through the trip and the project.",
+    href: "https://meet.google.com/otk-xsdr-gsz",
   },
   // Who to write to, by subject (client, 2026-10-05). The client supplied the
   // india-khan.fr address for this list themselves, which is the one
