@@ -21,7 +21,8 @@ export default function FinalCTA() {
             <div key={c.topic} className="ctaContact">
               <dt>{c.topic}</dt>
               <dd>
-                {c.email ? <a href={`mailto:${c.email}`}>{c.email}</a> : c.name}
+                {c.name && <span className="ctaContactName">{c.name}</span>}
+                {c.email && <a href={`mailto:${c.email}`}>{c.email}</a>}
               </dd>
             </div>
           ))}

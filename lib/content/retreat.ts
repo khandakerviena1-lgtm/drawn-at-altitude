@@ -1097,12 +1097,12 @@ export const cta = {
   // Who to write to, by subject (client, 2026-10-05). The client supplied the
   // india-khan.fr address for this list themselves, which is the one
   // deliberate exception to the "no India-Khan" rule — it is a contact, not a
-  // brand mention. Anastasiia has no address yet: her line renders her name
-  // without a link until one is given.
+  // brand mention. A line with both a name and an email shows the name with
+  // the address as its link.
   contactsHeading: "Who to write to",
   contacts: [
     { topic: "Project concept questions", email: "contact@india-khan.fr" },
     { topic: "Logistics & operations", email: "theindusrivercamp@gmail.com" },
-    { topic: "Sketching workshops", name: "Anastasiia Morozova" },
+    { topic: "Sketching workshops", name: "Anastasiia Morozova", email: "info@anastasiiamorozova.com" },
   ] as { topic: string; email?: string; name?: string }[],
 };
