@@ -3651,8 +3651,14 @@ html.isGated body {
   color: rgb(242 235 221 / 0.7);
 }
 
+/* Same face, size and tracking as the subject line above it (client,
+   2026-10-05) — the address is part of the label, not a second, bigger voice.
+   Case is left as typed: an email address in capitals reads as a different
+   address. */
 .ctaContact dd {
   margin: 2px 0 0;
+  font-size: var(--label-size);
+  letter-spacing: var(--btn-ls);
   color: var(--paper);
   overflow-wrap: anywhere;
 }
