@@ -1245,72 +1245,74 @@ html.isGated body {
   color: var(--muted);
 }
 
-/* The method beside the page it makes. The two plates have very different
-   shapes — a 307×512 printed panel and a 3:2 drawing — so they are aligned
-   on height rather than forced into a shared box. */
-.processPair {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: clamp(10px, 2.2vw, 30px);
-  max-width: 100%;
-  padding: 0 var(--pad-x);
+.processHeading {
+  margin-top: 0.6rem;
 }
 
-.processPage {
-  width: min(52vw, 720px);
-  flex: none;
+/* The page as the subject, the method as its label (2026-10-05). The sheet
+   has its own class rather than sharing `.revealPage`, whose 1080px width
+   sits later in this file and used to override the section's sizing. */
+.processStage {
+  width: min(100%, 1320px);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) clamp(240px, 21vw, 300px);
+  align-items: end;
+  gap: clamp(28px, 4vw, 64px);
+  margin-top: 2vh;
 }
 
-@media (max-width: 900px) {
-  /* Side by side and zoomed out, not stacked (client, 2026-08-19, after
-     phone testing). Stacking read as two unrelated pictures; the section's
-     whole argument is that the printed stage and the page it produces are
-     one thing, and that only reads when they sit together. Sizes are solved
-     against a 375px viewport: panel ~127px wide (56vw tall at its 307:512
-     aspect) + 14px gap + page at 50vw ≈ 187px = 328px, inside the 335px of
-     content width. The arrows keep order 3 and wrap to their own centred
-     row beneath the pair. */
-  .processPair {
-    flex-wrap: wrap;
-    gap: 14px;
-  }
-  /* Descendant selector on purpose: this media block sits BEFORE
-     .processViewport's own base rule in the file, so at equal specificity
-     the base wins and this height would silently never apply — the same
-     cascade trap this stylesheet has now sprung three times. 0,2,0 beats
-     the base's 0,1,0 regardless of order. */
-  /* Budgeted against the pair's own inner width, which is 295px at 375 —
-     the pair adds its own --pad-x on top of the section's, so the naive
-     335px budget wrapped the page onto a second row by 33px. Panel ~108px
-     (48vw tall at 307:512) + 14px gap + page at 44vw ≈ 165px = 287px. */
-  .processPair .processViewport {
-    order: 1;
-    height: min(48vw, 340px);
-  }
-  /* Doubled class for the same reason: .revealPage's own width rule sits
-     later in this file and wins at single-class specificity. */
-  .processPage.revealPage {
-    order: 2;
-    width: min(44vw, 560px);
-  }
-  .processArrow {
-    order: 3;
-  }
-}
-
-/* Exactly one panel wide, carrying the panel's own aspect — which is what
-   makes the strip exactly ten frames wide and -i*10% land true. */
-.processViewport {
+/* Matted like a print: a paper border, a hairline, a long soft shadow. */
+.processSheet {
   position: relative;
-  height: min(64vh, 560px);
-  aspect-ratio: 307 / 512;
-  flex: none;
+  margin: 0;
+  padding: clamp(10px, 1.4vw, 20px);
+  background: #fbf8f1;
+  box-shadow:
+    0 0 0 1px rgb(94 82 64 / 0.12),
+    0 2px 4px -2px rgb(48 40 30 / 0.12),
+    0 40px 80px -40px rgb(48 40 30 / 0.45);
+}
+
+.processWindow {
+  position: relative;
+  aspect-ratio: 1536 / 1024;
   overflow: hidden;
   background: var(--paper);
+}
+
+/* Lighter grain than the shared 0.5: on a page that is still mostly bare
+   paper, full-strength grain reads as grey dirt rather than tooth. */
+.processWindow .observedGrain {
+  opacity: 0.26;
+}
+
+.processZoom {
+  position: absolute;
+  inset: 0;
+  /* Push towards the window and the river, not the corner of the room. */
+  transform-origin: 58% 42%;
+  will-change: transform;
+}
+
+.processLabel {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+  padding-bottom: 6px;
+}
+
+/* The printed stage — exactly one panel wide at the panel's own aspect,
+   which is what makes the strip exactly ten frames wide and -i*10% land. */
+.processCard {
+  position: relative;
+  width: clamp(150px, 12vw, 190px);
+  aspect-ratio: 307 / 512;
+  overflow: hidden;
+  background: var(--paper);
+  border: 6px solid #fbf8f1;
   box-shadow:
-    0 1px 0 rgb(255 255 255 / 0.6),
-    0 22px 50px -30px rgb(48 40 30 / 0.5);
+    0 0 0 1px rgb(94 82 64 / 0.14),
+    0 22px 44px -26px rgb(48 40 30 / 0.5);
 }
 
 .processStrip {
@@ -1321,10 +1323,57 @@ html.isGated body {
   will-change: transform;
 }
 
+.processText {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  border-top: 1px solid rgb(94 82 64 / 0.22);
+  padding-top: 18px;
+}
+
+.processCount {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  margin: 0;
+}
+
+.processNum {
+  font-size: clamp(2.6rem, 4vw, 3.6rem);
+  line-height: 0.9;
+  color: var(--graphite);
+}
+
+.processOf {
+  color: var(--muted);
+}
+
+.processTitle {
+  margin: 0;
+  font-size: clamp(1.3rem, 1.8vw, 1.7rem);
+  font-style: italic;
+  line-height: 1.15;
+  color: var(--sage, #6b7350);
+}
+
+.processNote {
+  margin: 0;
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: var(--muted);
+  min-height: 4.8em; /* three lines held, so the arrows below never jump */
+}
+
+.processArrows {
+  display: flex;
+  gap: 10px;
+  margin-top: 6px;
+}
+
 .processArrow {
   flex: none;
-  width: clamp(38px, 4vw, 52px);
-  height: clamp(38px, 4vw, 52px);
+  width: 46px;
+  height: 46px;
   border-radius: 50%;
   border: 1px solid rgb(94 82 64 / 0.4);
   background: transparent;
@@ -1349,7 +1398,7 @@ html.isGated body {
   cursor: default;
 }
 
-/* Announced, not shown: the panel prints its own heading. */
+/* Announced, not shown: the label already prints the stage. */
 .processLive {
   position: absolute;
   width: 1px;
@@ -1359,70 +1408,126 @@ html.isGated body {
   white-space: nowrap;
 }
 
+/* Ten stages on one fine rule. The track is drawn as two gradients: the
+   run so far in sage, the rest as a hairline. --rail is 0…1. */
 .processRail {
-  display: flex;
-  justify-content: center;
-  flex-wrap: wrap;
-  gap: 4px 14px;
-  margin: 0;
+  --rail: 0;
+  position: relative;
+  width: min(100%, 1320px);
+  display: grid;
+  grid-template-columns: repeat(10, 1fr);
+  margin: 3vh 0 0;
   padding: 0;
   list-style: none;
 }
 
-.processTick {
-  position: relative;
-  display: flex;
-  align-items: baseline;
-  gap: 6px;
-  background: none;
-  border: 0;
-  padding: 4px 2px;
-  cursor: pointer;
-  opacity: 0.34;
-  transition: opacity 0.3s ease;
+.processRail::before {
+  content: "";
+  position: absolute;
+  left: 5%;
+  right: 5%;
+  top: 7px;
+  height: 1px;
+  background:
+    linear-gradient(var(--sage, #6b7350), var(--sage, #6b7350)) 0 0 / calc(var(--rail) * 100%) 100% no-repeat,
+    rgb(94 82 64 / 0.22);
+  transition: background-size 0.6s ease;
 }
 
-/* An invisible pseudo-element rather than real padding: real padding would
-   widen the flex row past the 375px viewport it already fills (ten ticks,
-   34px apart, room for none of it to grow without colliding with a
-   neighbour). This borrows from the row's own 6px gap instead — 6px
-   horizontal keeps neighbouring hit areas from touching (measured 34-35px
-   centre to centre); vertical has slack the layout doesn't, so it goes
-   further there. Still short of the 40px minimum, which the row's own width
-   makes structurally impossible for ten side-by-side targets; the arrows
-   beside it stay the primary control at a real 38px. */
+.processTick {
+  position: relative;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  background: none;
+  border: 0;
+  padding: 0 0 4px;
+  cursor: pointer;
+}
+
+/* A taller hit area than the dot, without widening the row. */
 .processTick::after {
   content: "";
   position: absolute;
-  inset: -10px -6px;
+  inset: -12px 0 -8px;
 }
 
-.processTick:hover,
-.processTick:focus-visible {
-  opacity: 0.7;
+.processTickDot {
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  background: var(--paper);
+  border: 1px solid rgb(94 82 64 / 0.35);
+  transition:
+    background 0.3s ease,
+    border-color 0.3s ease,
+    transform 0.3s ease;
 }
 
-.processTick.isActive {
-  opacity: 1;
+.processTick.isDone .processTickDot {
+  background: var(--sage, #6b7350);
+  border-color: var(--sage, #6b7350);
+  transform: scale(0.6);
+}
+
+.processTick.isActive .processTickDot {
+  background: var(--paper);
+  border: 4px solid var(--sage, #6b7350);
 }
 
 .processTickNum {
   color: var(--muted);
+  opacity: 0.6;
+  transition: opacity 0.3s ease;
 }
 
-.processTickTitle {
+.processTick:hover .processTickNum,
+.processTick:focus-visible .processTickNum,
+.processTick.isActive .processTickNum {
+  opacity: 1;
+}
+
+.processTick.isActive .processTickNum {
   color: var(--graphite);
-  font-size: clamp(0.72rem, 0.92vw, 0.92rem);
+}
+
+/* Phones and narrow tablets: the page full width, the label beneath it as
+   one row — card beside the text — so the printed stage and the page it
+   makes are still read together, never as two unrelated pictures. */
+@media (max-width: 900px) {
+  .processStage {
+    grid-template-columns: 1fr;
+    gap: 22px;
+  }
+  .processLabel {
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 16px;
+  }
+  .processCard {
+    width: clamp(92px, 24vw, 150px);
+    border-width: 4px;
+  }
+  .processText {
+    flex: 1;
+    min-width: 0;
+    border-top: 0;
+    padding-top: 0;
+  }
+  .processNote {
+    font-size: 0.88rem;
+    min-height: 0;
+  }
 }
 
 @media (max-width: 767px) {
-  /* No height override here any more: this block comes later in the file
-     than the max-900 side-by-side sizing and was silently re-inflating the
-     panel to 58vh, which is what pushed the page onto its own row. The
-     max-900 rule owns the size now. */
-  /* Ten titles do not fit a phone; the numbers still track the deck. */
-  .processTickTitle {
-    display: none;
+  .processSheet {
+    padding: 8px;
+  }
+  .processTickNum {
+    font-size: 0.62rem;
   }
 }
 

@@ -100,98 +100,132 @@ export default function DrawingProcess() {
   const pencilOpacity = useScrollMapped(build, [0.3, 0.56], [1, 0.34]);
 
   const stage = drawingProcess.stages[index];
+  const tween =
+    mounted && !reduced
+      ? { duration: 0.62, ease: [0.65, 0, 0.35, 1] as const }
+      : { duration: 0 };
 
+  // LAYOUT (2026-10-05, client: "zoomed, and more classy"). The page is now
+  // the subject — large, matted like a print — and the method sheet moves to
+  // a museum-label column beside it: the printed stage as a small card, the
+  // stage number, its title and one line of method. Previously the two were
+  // equal partners side by side, and `.revealPage`'s 1080px width (later in
+  // the stylesheet) silently overrode the pair's sizing, so the row ran off
+  // both edges of the screen. The sheet has its own class now.
+  //
+  // ZOOM: the camera pushes in a little at every stage, ending ~11% closer
+  // on the window and the river, so stepping through reads as leaning in to
+  // the page as it fills — not a slideshow of states.
   return (
     <section className="process" aria-label={drawingProcess.kicker}>
-      <div className="processHead">
+      <header className="processHead">
         <p className="typoEyebrow processKicker">{drawingProcess.kicker}</p>
-        <p className="typoBody processSub">
-          The method on the left, the page it makes on the right. Step through
-          and the drawing is built the way the sheet describes.
-        </p>
-      </div>
+        <h2 className="typoChapter processHeading">{drawingProcess.heading}</h2>
+        <p className="typoBody processSub">{drawingProcess.sub}</p>
+      </header>
 
-      <div className="processPair" onKeyDown={onKeyDown}>
-        <button
-          type="button"
-          className="processArrow"
-          onClick={() => go(index - 1)}
-          disabled={index === 0}
-          aria-label="Previous stage"
-        >
-          <span aria-hidden>←</span>
-        </button>
-
-        {/* The method: one printed stage, cut from the ten-panel strip. */}
-        <div className="processViewport">
-          <motion.img
-            className="processStrip"
-            src="/img/method-strip.webp"
-            alt={drawingProcess.alt}
-            animate={{ x: `-${index * 10}%` }}
-            transition={
-              mounted && !reduced
-                ? { duration: 0.62, ease: [0.65, 0, 0.35, 1] }
-                : { duration: 0 }
-            }
-          />
-        </div>
-
+      <div className="processStage" onKeyDown={onKeyDown}>
         {/* The page: the same drawing, built to this stage. */}
-        <div className="revealPage processPage">
-          <div className="observedGrain" />
-          <motion.img
-            className="revealLayer"
-            src="/img/room-line-pencil.webp"
-            alt=""
-            aria-hidden
-            style={{
-              opacity: pencilOpacity,
-              maskImage: pencilMask,
-              WebkitMaskImage: pencilMask,
-            }}
-          />
-          <motion.img
-            className="revealLayer"
-            src="/img/room-line-ink.webp"
-            alt=""
-            aria-hidden
-            style={{ maskImage: inkMask, WebkitMaskImage: inkMask }}
-          />
-          <motion.img
-            className="revealLayer"
-            src="/img/room-plate.webp"
-            alt="A room at the Indus River Camp drawn in ink and watercolour: the bed, a curtain, and a wall of windows onto the river and the mountains"
-            style={{ maskImage: washMask, WebkitMaskImage: washMask }}
-          />
-        </div>
+        <figure className="processSheet">
+          {/* A fixed window that crops, and the drawing zooming inside it —
+              scaling the window itself would grow the frame past its mat. */}
+          <div className="processWindow">
+          <motion.div
+            className="processZoom"
+            animate={{ scale: 1 + index * 0.012 }}
+            transition={mounted && !reduced ? { duration: 1.1, ease: [0.4, 0, 0.25, 1] } : { duration: 0 }}
+          >
+            <div className="observedGrain" />
+            <motion.img
+              className="revealLayer"
+              src="/img/room-line-pencil.webp"
+              alt=""
+              aria-hidden
+              style={{
+                opacity: pencilOpacity,
+                maskImage: pencilMask,
+                WebkitMaskImage: pencilMask,
+              }}
+            />
+            <motion.img
+              className="revealLayer"
+              src="/img/room-line-ink.webp"
+              alt=""
+              aria-hidden
+              style={{ maskImage: inkMask, WebkitMaskImage: inkMask }}
+            />
+            <motion.img
+              className="revealLayer"
+              src="/img/room-plate.webp"
+              alt="A room at the Indus River Camp drawn in ink and watercolour: the bed, a curtain, and a wall of windows onto the river and the mountains"
+              style={{ maskImage: washMask, WebkitMaskImage: washMask }}
+            />
+          </motion.div>
+          </div>
+        </figure>
 
-        <button
-          type="button"
-          className="processArrow"
-          onClick={() => go(index + 1)}
-          disabled={index === COUNT - 1}
-          aria-label="Next stage"
-        >
-          <span aria-hidden>→</span>
-        </button>
+        {/* The label: the printed stage, and what it asks for. */}
+        <aside className="processLabel">
+          <div className="processCard">
+            <motion.img
+              className="processStrip"
+              src="/img/method-strip.webp"
+              alt={drawingProcess.alt}
+              animate={{ x: `-${index * 10}%` }}
+              transition={tween}
+            />
+          </div>
+
+          <div className="processText">
+            <p className="processCount">
+              <span className="serif processNum">{stage.n}</span>
+              <span className="typoLabel processOf">/ {String(COUNT).padStart(2, "0")}</span>
+            </p>
+            <p className="serif processTitle">{stage.title}</p>
+            <p className="processNote">{drawingProcess.notes[index]}</p>
+
+            <div className="processArrows">
+              <button
+                type="button"
+                className="processArrow"
+                onClick={() => go(index - 1)}
+                disabled={index === 0}
+                aria-label="Previous stage"
+              >
+                <span aria-hidden>←</span>
+              </button>
+              <button
+                type="button"
+                className="processArrow"
+                onClick={() => go(index + 1)}
+                disabled={index === COUNT - 1}
+                aria-label="Next stage"
+              >
+                <span aria-hidden>→</span>
+              </button>
+            </div>
+          </div>
+        </aside>
       </div>
 
       <p className="processLive" aria-live="polite">
         {`Stage ${stage.n} of ${COUNT} — ${stage.title}`}
       </p>
 
-      <ol className="processRail">
+      {/* The ten stages as a fine rule: numbers only — the title lives in
+          the label — with the run so far drawn in. */}
+      <ol className="processRail" style={{ "--rail": index / (COUNT - 1) } as React.CSSProperties}>
         {drawingProcess.stages.map((s, i) => (
           <li key={s.n}>
             <button
               type="button"
-              className={`processTick ${i === index ? "isActive" : ""}`}
+              className={`processTick${i === index ? " isActive" : ""}${i < index ? " isDone" : ""}`}
               onClick={() => go(i)}
               aria-current={i === index ? "step" : undefined}
+              aria-label={`Stage ${s.n} — ${s.title}`}
             >
+              <span className="processTickDot" aria-hidden />
               <span className="typoLabel processTickNum">{s.n}</span>
-              <span className="hand processTickTitle">{s.title}</span>
             </button>
           </li>
         ))}
