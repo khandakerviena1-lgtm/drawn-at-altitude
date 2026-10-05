@@ -3378,6 +3378,32 @@ html.isGated body {
   background: #26282a;
 }
 
+/* The second ask — same shape as the first, lighter weight, so "request a
+   place" stays the primary action. */
+.btnOutline {
+  background: transparent;
+  box-shadow: inset 0 0 0 1px rgb(242 235 221 / 0.7);
+}
+
+.btnOutline:hover {
+  background: rgb(242 235 221 / 0.12);
+}
+
+.ctaButtons {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px 16px;
+}
+
+.ctaWebinarNote {
+  margin: -8px 0 0;
+  max-width: 44ch;
+  font-size: 0.85rem;
+  line-height: 1.5;
+  color: rgb(242 235 221 / 0.8);
+}
+
 .btnSolid:hover .arrow {
   transform: translateX(6px);
 }

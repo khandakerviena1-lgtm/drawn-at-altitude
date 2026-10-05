@@ -1105,6 +1105,21 @@ export const cta = {
   secondary: "View the full journey",
   mailto:
     "mailto:contact@india-khan.fr?subject=Drawn%20at%20Altitude%20%E2%80%94%20Request%20a%20place",
+  // The group webinar (client, 2026-10-05): an online session to talk the
+  // trip through before committing. No date yet and no registration page, so
+  // for now signing up is a prefilled email; swap `href` for a Zoom/Luma/
+  // Calendly link and add the date to `note` once it is set.
+  webinar: {
+    label: "Join the group webinar",
+    note: "An online session to talk through the trip and the project. The date is sent to everyone who signs up.",
+    href:
+      "mailto:contact@india-khan.fr?subject=" +
+      encodeURIComponent("Webinar — Drawn at Altitude") +
+      "&body=" +
+      encodeURIComponent(
+        "Hello,\n\nI would like to join the next group webinar about Drawn at Altitude.\n\nName:\nCountry / time zone:\n\nThank you",
+      ),
+  },
   // Who to write to, by subject (client, 2026-10-05). The client supplied the
   // india-khan.fr address for this list themselves, which is the one
   // deliberate exception to the "no India-Khan" rule — it is a contact, not a

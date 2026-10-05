@@ -9,9 +9,15 @@ export default function FinalCTA() {
     <section id="enquire" className="finalCta" aria-label="Join the journey">
       <h2 className="serif finalCtaHeadline">{cta.closing}</h2>
       <MetaLabel className="finalCtaMeta">{cta.meta}</MetaLabel>
-      <a className="btnSolid" href={cta.mailto}>
-        {cta.primary} <span className="arrow">→</span>
-      </a>
+      <div className="ctaButtons">
+        <a className="btnSolid" href={cta.mailto}>
+          {cta.primary} <span className="arrow">→</span>
+        </a>
+        <a className="btnSolid btnOutline" href={cta.webinar.href}>
+          {cta.webinar.label} <span className="arrow">→</span>
+        </a>
+      </div>
+      <p className="ctaWebinarNote">{cta.webinar.note}</p>
       <a className="ctaTextLink" href="#journey">
         {cta.secondary}
       </a>
