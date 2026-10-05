@@ -14,6 +14,19 @@ export default function FinalCTA() {
       <a className="ctaTextLink" href="#journey">
         {cta.secondary}
       </a>
+      <div className="ctaContacts">
+        <MetaLabel className="finalCtaMeta">{cta.contactsHeading}</MetaLabel>
+        <dl>
+          {cta.contacts.map((c) => (
+            <div key={c.topic} className="ctaContact">
+              <dt>{c.topic}</dt>
+              <dd>
+                {c.email ? <a href={`mailto:${c.email}`}>{c.email}</a> : c.name}
+              </dd>
+            </div>
+          ))}
+        </dl>
+      </div>
     </section>
   );
 }

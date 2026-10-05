@@ -1093,5 +1093,16 @@ export const cta = {
   primary: "Request a place",
   secondary: "View the full journey",
   mailto:
-    "mailto:hello@india-khan.com?subject=Drawn%20at%20Altitude%20%E2%80%94%20Request%20a%20place",
+    "mailto:contact@india-khan.fr?subject=Drawn%20at%20Altitude%20%E2%80%94%20Request%20a%20place",
+  // Who to write to, by subject (client, 2026-10-05). The client supplied the
+  // india-khan.fr address for this list themselves, which is the one
+  // deliberate exception to the "no India-Khan" rule — it is a contact, not a
+  // brand mention. Anastasiia has no address yet: her line renders her name
+  // without a link until one is given.
+  contactsHeading: "Who to write to",
+  contacts: [
+    { topic: "Project concept questions", email: "contact@india-khan.fr" },
+    { topic: "Logistics & operations", email: "theindusrivercamp@gmail.com" },
+    { topic: "Sketching workshops", name: "Anastasiia Morozova" },
+  ] as { topic: string; email?: string; name?: string }[],
 };
