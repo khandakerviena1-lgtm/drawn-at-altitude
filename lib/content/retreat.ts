@@ -1148,8 +1148,8 @@ export const cta = {
   // the address as its link.
   contactsHeading: "Who to write to",
   contacts: [
-    { topic: "Project concept questions", email: "contact@india-khan.fr" },
+    { topic: "Project & concept", email: "contact@india-khan.fr" },
     { topic: "Logistics & operations", email: "theindusrivercamp@gmail.com" },
-    { topic: "Sketching workshops", name: "Anastasiia Morozova", email: "info@anastasiiamorozova.com" },
+    { topic: "Host", name: "Anastasiia Morozova", email: "info@anastasiiamorozova.com" },
   ] as { topic: string; email?: string; name?: string }[],
 };
