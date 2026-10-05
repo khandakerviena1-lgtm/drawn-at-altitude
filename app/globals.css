@@ -3436,6 +3436,38 @@ html.isGated body {
   display: block;
 }
 
+.ctaContactMail {
+  display: inline-flex;
+  align-items: center;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 4px 10px;
+}
+
+.copyEmail {
+  border: 1px solid rgb(242 235 221 / 0.45);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--paper);
+  font-family: var(--font-sans), sans-serif;
+  font-size: 0.68rem;
+  letter-spacing: var(--btn-ls);
+  text-transform: uppercase;
+  padding: 3px 10px;
+  cursor: pointer;
+  transition: background-color 200ms ease;
+}
+
+.copyEmail:hover,
+.copyEmail:focus-visible {
+  background: rgb(242 235 221 / 0.14);
+}
+
+.copyEmail:focus-visible {
+  outline: 1px solid var(--paper);
+  outline-offset: 2px;
+}
+
 .ctaContact a {
   color: inherit;
   text-underline-offset: 3px;
@@ -3903,6 +3935,20 @@ html.isGated body {
   font-size: 0.95rem;
   line-height: 1.62;
   text-wrap: pretty;
+}
+
+/* What can change on the day — a note in the frieze's orange, not a box.
+   No side rule: the panel is centred, and a left border fights that. */
+.jtPanelFlex {
+  margin: 10px 0 0;
+  color: var(--graphite);
+  font-size: 0.9rem;
+  line-height: 1.55;
+}
+
+.jtPanelFlex .typoLabel {
+  color: var(--jt-orange);
+  margin-right: 0.35em;
 }
 
 /* Where each meal is eaten, per day. */

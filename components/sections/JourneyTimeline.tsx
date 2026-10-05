@@ -479,6 +479,13 @@ export default function JourneyTimeline() {
             {day.place} <span className="jtSep">/</span> {day.fragment}
           </p>
           <p className="jtPanelLong">{day.long}</p>
+          {/* What can change on the day, in the camp's words — only on the
+              days where there is a real choice. */}
+          {day.flexible && (
+            <p className="jtPanelFlex">
+              <span className="typoLabel">Flexible</span> {day.flexible}
+            </p>
+          )}
           {/* Breakfast, lunch and dinner — and where each one is eaten. */}
           <dl className="jtMeals">
             {([

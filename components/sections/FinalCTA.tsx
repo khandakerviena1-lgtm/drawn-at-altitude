@@ -2,6 +2,7 @@
 // No urgency, no countdowns.
 import { cta } from "@/lib/content/retreat";
 import { MetaLabel } from "@/components/ui/Typography";
+import CopyEmail from "@/components/ui/CopyEmail";
 
 export default function FinalCTA() {
   return (
@@ -22,7 +23,12 @@ export default function FinalCTA() {
               <dt>{c.topic}</dt>
               <dd>
                 {c.name && <span className="ctaContactName">{c.name}</span>}
-                {c.email && <a href={`mailto:${c.email}`}>{c.email}</a>}
+                {c.email && (
+                  <span className="ctaContactMail">
+                    <a href={`mailto:${c.email}`}>{c.email}</a>
+                    <CopyEmail email={c.email} />
+                  </span>
+                )}
               </dd>
             </div>
           ))}
