@@ -699,6 +699,9 @@ export const morph = {
 // so the section opened on blank paper. 0.16 shows the first third of the
 // big shapes in graphite — which is what "see & simplify" asks for — and
 // pencil still completes exactly at 03.
+// UNUSED since 2026-10-05: DrawingProcess now shows one built image per
+// stage (scripts/build-process-stages.py) instead of masking three layers.
+// Kept only as the record of the earlier mapping.
 export const STAGE_BUILD = [
   0.16, 0.2, 0.3, 0.45, 0.52, 0.56, 0.72, 0.82, 0.92, 1,
 ] as const;
@@ -707,19 +710,20 @@ export const drawingProcess = {
   kicker: "How a page is made",
   heading: "One page, ten stages.",
   sub: "The method sheet beside the page it builds. Step through, and the drawing is made the way the sheet describes.",
-  // One line per stage, shown under its title. Method notes, not quotes:
-  // where the sheet's own words exist (01, 04, 07) they are kept close.
+  // One line per stage, shown under its title — the sheet's own instruction
+  // for that panel, closely paraphrased, because the drawing now shows each
+  // one happening (see DrawingProcess / scripts/build-process-stages.py).
   notes: [
-    "Five big shapes — sky, mountains, river, vegetation, the terrace — drawn lightly enough to still be wrong.",
-    "Decide what the page is about, and where the eye comes in.",
-    "The window frames checked against each other before anything is committed.",
-    "The line commits: stronger in the foreground, lighter in the distance.",
-    "Lights and darks settled in grey before a single colour is chosen.",
-    "Colour taken from the place itself — sand, glacier water, apricot — never from a chart.",
-    "Wet-on-wet for the sky and the far mountains. Very light; let the paper show.",
-    "Each range paler and cooler than the one in front of it.",
-    "Wood, cloth, reeds — detail only where the eye lands.",
-    "A line of handwriting, a place, a date. The page becomes a record.",
+    "Break the scene into five big shapes: sky, mountains, river, vegetation, foreground.",
+    "Check the horizon, the focal point, balance and negative space. Leave room for the story.",
+    "Establish the horizon line, set the vanishing lines of the window, check proportions in pencil.",
+    "Micron pen: stronger lines in the foreground, lighter in the distance. Leave the mountains light.",
+    "A quick value study in four or five tones — light, shadow and contrast before any colour.",
+    "A limited palette taken from the landscape: mineral and Pangong blues, mauve grey, warm earth, ochre.",
+    "Wet-on-wet for the sky and the distant mountains. Keep it very light; let the paper show.",
+    "Distant mountains light and cool, the middle warmer, the foreground warm and strongest.",
+    "Water, vegetation, stone, wood — the textures and details, only where the eye lands.",
+    "Bring everything together: small objects, handwritten notes, a place and a date.",
   ],
   alt: "Anastasiia's ten-stage method sheet: the same view from the camp room window drawn from simplified shapes, through composition, perspective, ink contour, value study, a Ladakh palette, first washes, depth, textures, to a finished annotated page",
   stages: [

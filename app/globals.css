@@ -1280,10 +1280,97 @@ html.isGated body {
   background: var(--paper);
 }
 
-/* Lighter grain than the shared 0.5: on a page that is still mostly bare
-   paper, full-strength grain reads as grey dirt rather than tooth. */
-.processWindow .observedGrain {
-  opacity: 0.26;
+/* One full image per stage, stacked in stage order (see DrawingProcess). */
+.processState {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* The sheet's hand-drawn guides, in the drawing's own coordinates. */
+.processGuides {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  pointer-events: none;
+}
+
+.guideNumber circle {
+  fill: rgb(251 248 241 / 0.82);
+  stroke: #5e5446;
+  stroke-width: 2;
+}
+
+.guideNumber text {
+  font-family: var(--font-hand), cursive;
+  font-size: 38px;
+  fill: #3a342b;
+}
+
+.guideThirds {
+  fill: none;
+  stroke: #8a7f6d;
+  stroke-width: 1.6;
+  stroke-dasharray: 10 9;
+  opacity: 0.7;
+}
+
+/* The sheet marks its construction in red pencil. */
+.guideRed,
+.guideRedThin {
+  fill: none;
+  stroke: #c0453a;
+  stroke-width: 3;
+  stroke-linecap: round;
+}
+
+.guideRedThin {
+  stroke-width: 2;
+  stroke-dasharray: 3 8;
+}
+
+.guideHand {
+  font-family: var(--font-hand), cursive;
+  font-size: 38px;
+}
+
+.guideRedText {
+  fill: #c0453a;
+}
+
+.guideInk {
+  fill: #2f2a24;
+  paint-order: stroke;
+  stroke: rgb(251 248 241 / 0.55);
+  stroke-width: 6px;
+  stroke-linejoin: round;
+}
+
+/* Panel 06 — nine swatches along the top margin of the page. Positioned in
+   percentages of the drawing so they ride the zoom with it. */
+.processPalette {
+  position: absolute;
+  left: 8%;
+  top: 9%;
+  display: flex;
+  gap: 0.9%;
+  width: 30%;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.processPalette li {
+  flex: 1;
+  aspect-ratio: 1 / 1.15;
+  border-radius: 46% 54% 42% 58% / 55% 45% 58% 42%;
+  opacity: 0.88;
+  box-shadow: inset 0 0 6px rgb(0 0 0 / 0.08);
 }
 
 .processZoom {

@@ -1,50 +1,65 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
-import {
-  animate,
-  motion,
-  useMotionTemplate,
-  useMotionValue,
-  useReducedMotion,
-  type AnimationPlaybackControls,
-} from "motion/react";
-import { CAMERA_EASE, useScrollMapped } from "@/lib/animation/useScrollMapped";
-import { drawingProcess, STAGE_BUILD } from "@/lib/content/retreat";
+import { useCallback, useEffect, useState } from "react";
+import { motion, useReducedMotion } from "motion/react";
+import { drawingProcess } from "@/lib/content/retreat";
 
-// HOW A PAGE IS MADE — the method and the page it makes, in one section.
+// HOW A PAGE IS MADE — the method sheet beside the page it builds.
 //
-// This merges two sections that were saying the same thing twice: the method
-// deck (ten printed stages) and "One page, from nothing" (a drawing building
-// itself from graphite to washes). They were separated by three screens and
-// neither explained the other.
+// ONE STATE PER STAGE (2026-10-05, client: the method and the drawing did not
+// match). The earlier build had only three layers — pencil, ink, colour —
+// so seven of the ten printed stages (composition, perspective, values,
+// palette, depth, textures, annotation) changed nothing the sheet described.
+// Now every stage has its own state of the drawing, built offline by
+// scripts/build-process-stages.py from the ONE plate and its line layers, so
+// all states register pixel for pixel:
 //
-// The hinge is that the method sheet's stages ARE the build stages. Step to
-// 04 CONTOUR WITH MICRON and the ink goes down; step to 07 FIRST WASHES and
-// the colour arrives. Nothing is invented to make that line up — `STAGE_BUILD`
-// maps each printed stage onto the pencil/ink/wash windows the reveal already
-// used, and 04 and 07 land exactly on the ink and wash thresholds because
-// that is what those stages say they are.
+//   01 five flat shapes in the sheet's palette   06 the value page + palette swatches
+//   02 shapes under a first light pencil         07 wet-on-wet sky and far mountains only
+//   03 full pencil construction                  08 colour everywhere, still soft
+//   04 Micron ink over a graphite ghost          09 the finished, crisp page
+//   05 value study in five greys under the ink   10 the page + handwritten notes
 //
-// So: the left plate teaches, the right plate demonstrates, and one control
-// drives both. The instruction and its result can no longer drift apart.
+// The guides the sheet draws by hand — numbered shapes, thirds and a focal
+// ring, horizon and vanishing lines, swatches, notes — are SVG/HTML on top,
+// in the drawing's own coordinates (viewBox 1536×1024), so they zoom with it.
 //
-// The reveal machinery is unchanged and simply driven by a different source.
-// `useScrollMapped` takes any MotionValue, so swapping scroll for a stepped,
-// tweened value needed no change to the masks at all — which is the payoff of
-// having built that layer to accept a value rather than read scroll itself.
+// CROSSFADE WITHOUT A DIP: states are stacked in stage order and every state
+// at or below the current one is fully opaque. Forward, the new state fades
+// in over the old; backward, the top state fades out over one already there.
+// Never two half-transparent images, so the page never greys out mid-change.
 //
-// All three states come from ONE file: the colour plate divided by a heavy
-// blur of itself keeps fine dark strokes and drops broad wash tone, leaving
-// the drawing's own linework, emitted twice — faint grey graphite, dark ink.
-// Because every layer derives from the same image they register perfectly.
-//
-// HONEST LIMIT, unchanged: no hand, no brush, and the plate underneath is
-// fabricated concept art, not Anastasiia's. It cannot ship publicly as her
-// work. The real fix is overhead footage of her drawing one page.
+// HONEST LIMIT, unchanged: the plate is fabricated concept art, not
+// Anastasiia's, and the stages are derived from it, not drawn. It cannot ship
+// publicly as her work; the real fix is overhead footage of her drawing a page.
 
 const COUNT = drawingProcess.stages.length;
-const FEATHER = 22;
+
+const STATES = [
+  "s01-shapes",
+  "s02-sketch",
+  "s03-pencil",
+  "s04-ink",
+  "s05-value",
+  "s07-washes",
+  "s08-depth",
+  "s09-final",
+] as const;
+// Which state each printed stage shows (06 and 10 add overlays, not states).
+const STAGE_STATE = [0, 1, 2, 3, 4, 4, 5, 6, 7, 7];
+
+// The sheet's own Ladakh palette, as printed on panel 06.
+const PALETTE = [
+  ["Mineral blue", "#7d93ad"],
+  ["Pangong blue", "#a9bfd4"],
+  ["Mauve grey", "#a99aaa"],
+  ["Mountain grey", "#a3a19c"],
+  ["Warm earth", "#b48a62"],
+  ["Raw sienna", "#c99a63"],
+  ["Olive green", "#8a8f5a"],
+  ["Warm ochre", "#d1a85e"],
+  ["Stone", "#c4baa8"],
+] as const;
 
 export default function DrawingProcess() {
   const reduced = useReducedMotion();
@@ -66,56 +81,15 @@ export default function DrawingProcess() {
     }
   };
 
-  // The page's build position. Stepped, then tweened — so the drawing catches
-  // up to the stage rather than snapping to it.
-  // Explicit generic: STAGE_BUILD is `as const`, so this would infer
-  // MotionValue<0.1> and refuse every later value (the same literal-inference
-  // trap documented in FilmBook and ArtistVision).
-  const build = useMotionValue<number>(STAGE_BUILD[0]);
-  const controls = useRef<AnimationPlaybackControls | null>(null);
-  useEffect(() => {
-    controls.current?.stop();
-    if (reduced) {
-      build.set(STAGE_BUILD[index]);
-      return;
-    }
-    controls.current = animate(build, STAGE_BUILD[index], {
-      duration: 0.85,
-      ease: [0.4, 0, 0.25, 1],
-    });
-    return () => controls.current?.stop();
-  }, [index, reduced, build]);
-
-  const pencilEdge = useScrollMapped(build, [0.08, 0.3], [-FEATHER, 100], CAMERA_EASE);
-  const inkEdge = useScrollMapped(build, [0.3, 0.56], [-FEATHER, 100], CAMERA_EASE);
-  const washEdge = useScrollMapped(build, [0.56, 0.86], [-FEATHER, 100], CAMERA_EASE);
-
-  const pencilMask = useMotionTemplate`linear-gradient(100deg, #000 ${pencilEdge}%, transparent calc(${pencilEdge}% + ${FEATHER}%))`;
-  const inkMask = useMotionTemplate`linear-gradient(100deg, #000 ${inkEdge}%, transparent calc(${inkEdge}% + ${FEATHER}%))`;
-  // 172°, not 180°: a wash laid by hand does not arrive on a spirit level.
-  const washMask = useMotionTemplate`linear-gradient(172deg, #000 ${washEdge}%, transparent calc(${washEdge}% + ${FEATHER}%))`;
-
-  // Graphite is buried, not erased — an under-drawing survives beneath a
-  // finished page.
-  const pencilOpacity = useScrollMapped(build, [0.3, 0.56], [1, 0.34]);
-
   const stage = drawingProcess.stages[index];
-  const tween =
-    mounted && !reduced
-      ? { duration: 0.62, ease: [0.65, 0, 0.35, 1] as const }
-      : { duration: 0 };
+  const current = STAGE_STATE[index];
+  const animated = mounted && !reduced;
+  const tween = animated
+    ? { duration: 0.62, ease: [0.65, 0, 0.35, 1] as const }
+    : { duration: 0 };
+  const fade = animated ? { duration: 0.75, ease: [0.4, 0, 0.25, 1] as const } : { duration: 0 };
+  const show = (on: boolean) => ({ opacity: on ? 1 : 0 });
 
-  // LAYOUT (2026-10-05, client: "zoomed, and more classy"). The page is now
-  // the subject — large, matted like a print — and the method sheet moves to
-  // a museum-label column beside it: the printed stage as a small card, the
-  // stage number, its title and one line of method. Previously the two were
-  // equal partners side by side, and `.revealPage`'s 1080px width (later in
-  // the stylesheet) silently overrode the pair's sizing, so the row ran off
-  // both edges of the screen. The sheet has its own class now.
-  //
-  // ZOOM: the camera pushes in a little at every stage, ending ~11% closer
-  // on the window and the river, so stepping through reads as leaning in to
-  // the page as it fills — not a slideshow of states.
   return (
     <section className="process" aria-label={drawingProcess.kicker}>
       <header className="processHead">
@@ -125,42 +99,111 @@ export default function DrawingProcess() {
       </header>
 
       <div className="processStage" onKeyDown={onKeyDown}>
-        {/* The page: the same drawing, built to this stage. */}
         <figure className="processSheet">
           {/* A fixed window that crops, and the drawing zooming inside it —
               scaling the window itself would grow the frame past its mat. */}
           <div className="processWindow">
-          <motion.div
-            className="processZoom"
-            animate={{ scale: 1 + index * 0.012 }}
-            transition={mounted && !reduced ? { duration: 1.1, ease: [0.4, 0, 0.25, 1] } : { duration: 0 }}
-          >
-            <div className="observedGrain" />
-            <motion.img
-              className="revealLayer"
-              src="/img/room-line-pencil.webp"
-              alt=""
-              aria-hidden
-              style={{
-                opacity: pencilOpacity,
-                maskImage: pencilMask,
-                WebkitMaskImage: pencilMask,
-              }}
-            />
-            <motion.img
-              className="revealLayer"
-              src="/img/room-line-ink.webp"
-              alt=""
-              aria-hidden
-              style={{ maskImage: inkMask, WebkitMaskImage: inkMask }}
-            />
-            <motion.img
-              className="revealLayer"
-              src="/img/room-plate.webp"
-              alt="A room at the Indus River Camp drawn in ink and watercolour: the bed, a curtain, and a wall of windows onto the river and the mountains"
-              style={{ maskImage: washMask, WebkitMaskImage: washMask }}
-            />
-          </motion.div>
+            <motion.div
+              className="processZoom"
+              animate={{ scale: 1 + index * 0.012 }}
+              transition={animated ? { duration: 1.1, ease: [0.4, 0, 0.25, 1] } : { duration: 0 }}
+            >
+              {STATES.map((s, i) => (
+                <motion.img
+                  key={s}
+                  className="processState"
+                  src={`/img/process/${s}.webp`}
+                  alt={
+                    i === current
+                      ? `The camp room drawing at stage ${stage.n}, ${stage.title.toLowerCase()}`
+                      : ""
+                  }
+                  aria-hidden={i === current ? undefined : true}
+                  loading="lazy"
+                  decoding="async"
+                  initial={false}
+                  animate={show(i <= current)}
+                  transition={fade}
+                />
+              ))}
+
+              <svg
+                className="processGuides"
+                viewBox="0 0 1536 1024"
+                preserveAspectRatio="none"
+                aria-hidden
+              >
+                {/* 01 — the five big shapes, numbered as on the sheet. */}
+                <motion.g initial={false} animate={show(index === 0)} transition={fade}>
+                  {[
+                    [1060, 150, "1"],
+                    [1180, 335, "2"],
+                    [1000, 470, "3"],
+                    [1000, 615, "4"],
+                    [1160, 880, "5"],
+                  ].map(([x, y, n]) => (
+                    <g key={n} className="guideNumber">
+                      <circle cx={x} cy={y} r={30} />
+                      <text x={x} y={Number(y) + 12} textAnchor="middle">
+                        {n}
+                      </text>
+                    </g>
+                  ))}
+                </motion.g>
+
+                {/* 02 — thirds, and the main focal point. */}
+                <motion.g initial={false} animate={show(index === 1)} transition={fade}>
+                  <path className="guideThirds" d="M512 0V1024M1024 0V1024M0 341H1536M0 683H1536" />
+                  <ellipse className="guideRed" cx={975} cy={640} rx={170} ry={95} />
+                  <text className="guideHand guideRedText" x={1040} y={790}>
+                    Main focal point
+                  </text>
+                </motion.g>
+
+                {/* 03 — horizon, and the window's lines running to the
+                    vanishing point off the left of the page. */}
+                <motion.g initial={false} animate={show(index === 2)} transition={fade}>
+                  <path className="guideRed" d="M0 420H1536" />
+                  <path className="guideRedThin" d="M1500 46L0 174M1500 796L0 596" />
+                  <text className="guideHand guideRedText" x={1330} y={405}>
+                    Horizon
+                  </text>
+                  <text className="guideHand guideRedText" x={110} y={150}>
+                    ← VP
+                  </text>
+                </motion.g>
+
+                {/* 10 — the page tells the journey. */}
+                <motion.g initial={false} animate={show(index === 9)} transition={fade}>
+                  <text className="guideHand guideInk" x={130} y={120}>
+                    A quiet afternoon by the Indus.
+                  </text>
+                  <text className="guideHand guideInk" x={1230} y={445}>
+                    Indus River ↓
+                  </text>
+                  <text className="guideHand guideInk" x={960} y={900}>
+                    Afternoon light
+                  </text>
+                  <text className="guideHand guideInk" x={130} y={930}>
+                    Leh, Ladakh · September 2027
+                  </text>
+                </motion.g>
+              </svg>
+
+              {/* 06 — the limited palette, painted as test swatches on the
+                  margin of the page, the way the sheet lays it out. */}
+              <motion.ul
+                className="processPalette"
+                initial={false}
+                animate={show(index === 5)}
+                transition={fade}
+                aria-hidden
+              >
+                {PALETTE.map(([name, colour]) => (
+                  <li key={name} style={{ background: colour }} title={name} />
+                ))}
+              </motion.ul>
+            </motion.div>
           </div>
         </figure>
 
