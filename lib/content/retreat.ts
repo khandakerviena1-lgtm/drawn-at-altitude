@@ -947,7 +947,7 @@ export const facts = [
   { label: "Group", value: "8 guests" },
   { label: "Rooms", value: "Individual rooms" },
   { label: "Base", value: "The Indus River Camp" },
-  { label: "Price", value: "€5,000 per guest" },
+  { label: "Price", value: "Up to €4,000 per guest" },
   { label: "Scope", value: "Land only" },
 ];
 
@@ -962,9 +962,12 @@ export const facts = [
 // 1,000 host flights, and so on). NONE of that belongs on a public page, and
 // none of it is reproduced here. Only what is addressed to a guest is.
 //
-// One thing the source resolves: individual rooms are INCLUDED in the 5,000,
-// and the price would fall if the group chose to share — so there is no single
-// supplement to disclose, which was an open question before.
+// PRICE (client, 2026-10-05): the final price is CAPPED at €4,000 per guest —
+// a ceiling, not a quote, so the page says "up to" and the note says it will
+// not be exceeded. Replaces the provisional €5,000 from the partner deck.
+//
+// Still from the source: individual rooms are INCLUDED in the price, and it
+// would fall if the group chose to share — so there is no single supplement.
 const TO_CONFIRM = "TO CONFIRM" as const;
 
 export const booking = {
@@ -985,7 +988,7 @@ export const booking = {
       hint: "The one field a guest cannot act without — flights into Leh sell out",
     },
     { label: "Duration", value: "9 days, Leh to Leh" },
-    { label: "Price", value: "€5,000 per guest", hint: "Land only, Leh arrival to Leh departure" },
+    { label: "Price", value: "Up to €4,000 per guest", hint: "Land only, Leh arrival to Leh departure. The final price will not exceed this" },
     {
       label: "Rooms",
       value: "Individual rooms, included",
@@ -997,10 +1000,9 @@ export const booking = {
     { label: "Balance", value: TO_CONFIRM, hint: "Set a due date once booking opens" },
     { label: "Cancellation", value: TO_CONFIRM, hint: "Required before any money is taken" },
   ],
-  // The pricing in the source is explicitly provisional, and saying so is
-  // better than being corrected later.
+  // The exact figure is set at contracting, under the €4,000 ceiling.
   priceNote:
-    "Pricing is confirmed at contracting: ground costs are quoted for the partner property's seven-day programme and are being re-quoted for nine days.",
+    "The final price is confirmed at contracting and is capped at €4,000 per guest — it can come in lower, never higher.",
   // ⚠️ The French operator's name and its APST/RC/HISCOX registration line
   // were removed together at the client's instruction (2026-08-19, "no
   // India-Khan mentions"). They travel together on purpose: those numbers are
@@ -1011,7 +1013,8 @@ export const booking = {
   // which the previous version had.
   operator: {
     label: "Ground operations",
-    name: "Alphonso Stories, Delhi — Priyanka Chhablani",
+    // Client, 2026-10-05: the camp itself runs the ground operations.
+    name: "The Indus River Camp",
     line: "",
     ground: "",
   },
